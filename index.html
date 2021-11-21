@@ -5715,8 +5715,8 @@ async function WebGL_experiment() {
 	async function loggedIn() {
 		let exists = await fetch("https://willard.fun/profile").then(res => res.text()).catch(() => "401")
 		if (!exists || exists === "401") {
-			if (location.href.startsWith("https://low-fat-lard.github.io/webgl-experiment/")) {
-				alert("You're not logged in. Head over to https://willard.fun/login to login or register before connecting to the server.")
+			if (location.href.startsWith("https://low-fat-lard.github.io/")) {
+				alert("You're not logged in. Head over to https://low-fat-lard.github.io/login to login or register before connecting to the server.")
 			}
 			else {
 				alert("Multiplayer is currently only available on https://low-fat-lard.github.io/login => https://low-fat-lard.github.io/webgl-experiment/")
