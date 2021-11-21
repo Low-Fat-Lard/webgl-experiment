@@ -1860,7 +1860,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 async function createDatabase() {
 	return await new Promise((resolve, reject) => {
-		let request = window.indexedDB.open("WebGL-experiment", 1)
+		let request = window.indexedDB.open("WebGL_experiment", 1)
 
 		request.onupgradeneeded = function(event) {
 			let DB = event.target.result
@@ -4014,7 +4014,7 @@ window.canvas.width  = window.innerWidth
 window.canvas.height = window.innerHeight
 window.controlMap = {}
 
-async function WebGL-experiment() {
+async function WebGL_experiment() {
 	// Cache user-defined globals
 	const { canvas, ctx, savebox, boxCenterTop, saveDirections, message, quota, hoverbox, loadString, controlMap } = window
 
@@ -8161,7 +8161,7 @@ async function WebGL-experiment() {
 		initPlayer()
 		initWebgl()
 
-		if (win.location.origin === "https://www.kasandbox.org" && (loadString || WebGL-experiment.toString().length !== 183240)) {
+		if (win.location.origin === "https://www.kasandbox.org" && (loadString || WebGL_experiment.toString().length !== 183240)) {
 			// Prevent Ctrl F
 			message.innerHTML = '.oot lanigiro eht tuo kcehc ot>rb<erus eb ,siht ekil uoy fI>rb<.dralliW yb >a/<nahKeniM>"wen_"=tegrat "8676731005517465/cm/sc/gro.ymedacanahk.www//:sptth"=ferh a< fo>rb<ffo-nips a si margorp sihT'.split("").reverse().join("")
 		}
@@ -8190,7 +8190,7 @@ async function WebGL-experiment() {
 	// Define all the scene draw functions
 	(function() {
 		function title() {
-			let title = "MINEKHAN"
+			let title = "WEBGLCRAFT"
 			let subtext = "JAVASCRIPT EDITION"
 			let font = "VT323,monospace"
 			strokeWeight(1)
@@ -8408,7 +8408,7 @@ async function WebGL-experiment() {
 }
 
 window.onload = async function() {
-	var init = await WebGL-experiment()
+	var init = await WebGL_experiment()
 	if (window.parent.raf) {
 		window.cancelAnimationFrame(window.parent.raf)
 		console.log("Canceled", window.parent.raf)
