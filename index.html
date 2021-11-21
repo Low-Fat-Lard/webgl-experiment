@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- @MineKhan version Alpha 0.7.1
+<!-- @WebGL-experiment version Alpha 0.7.1
 
 	NOTE:
 The "Save" button saves your world to your local browser. Nobody else can see it. However, if you're on a public or shared computer, that save may be deleted unexpectedly. So it's a good idea to keep a safe copy of your save string somewhere where it won't be deleted.
@@ -64,10 +64,10 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="Play creative mode Minecraft right from your browser!">
 		<meta name="keywords" content="Khan Academy, Programs, Search">
-		<meta property="og:title" content="MineKhan"/>
+		<meta property="og:title" content="WebGL-experiment"/>
 		<meta property="og:description" content="Play creative mode Minecraft right from your browser!"/>
 		<meta property="og:image" content="https://www.khanacademy.org/computer-programming/minekhan/5647155001376768/5308848032661504.png"/>
-		<title>MineKhan</title>
+		<title>WebGL-experiment</title>
 		<!-- <link id="vtfont" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"> -->
 		<link rel="preload" href="https://willard.fun/fonts/VT323.woff2" as="font" type="font/woff2" crossorigin>
 		<link rel="shortcut icon" type="image/ico" href="https://willard.fun/assets/minekhan.ico">
@@ -1860,7 +1860,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 async function createDatabase() {
 	return await new Promise((resolve, reject) => {
-		let request = window.indexedDB.open("MineKhan", 1)
+		let request = window.indexedDB.open("WebGL-experiment", 1)
 
 		request.onupgradeneeded = function(event) {
 			let DB = event.target.result
@@ -4014,7 +4014,7 @@ window.canvas.width  = window.innerWidth
 window.canvas.height = window.innerHeight
 window.controlMap = {}
 
-async function MineKhan() {
+async function WebGL-experiment() {
 	// Cache user-defined globals
 	const { canvas, ctx, savebox, boxCenterTop, saveDirections, message, quota, hoverbox, loadString, controlMap } = window
 
@@ -5683,7 +5683,7 @@ async function MineKhan() {
 	commands.set("ban", args => {
 		let username = args.join(" ")
 		if (!username) {
-			chat(`Please provide a username. Like /ban Willard`)
+			chat(`Please provide a username. Like /ban Low Fat Lard`)
 			return
 		}
 		if (!window.ban) {
@@ -5715,11 +5715,11 @@ async function MineKhan() {
 	async function loggedIn() {
 		let exists = await fetch("https://willard.fun/profile").then(res => res.text()).catch(() => "401")
 		if (!exists || exists === "401") {
-			if (location.href.startsWith("https://willard.fun")) {
+			if (location.href.startsWith("https://low-fat-lard.github.io/webgl-experiment/")) {
 				alert("You're not logged in. Head over to https://willard.fun/login to login or register before connecting to the server.")
 			}
 			else {
-				alert("Multiplayer is currently only available on https://willard.fun/login => https://willard.fun/minekhan")
+				alert("Multiplayer is currently only available on https://low-fat-lard.github.io/login => https://low-fat-lard.github.io/webgl-experiment/")
 			}
 			return false
 		}
@@ -8161,7 +8161,7 @@ async function MineKhan() {
 		initPlayer()
 		initWebgl()
 
-		if (win.location.origin === "https://www.kasandbox.org" && (loadString || MineKhan.toString().length !== 183240)) {
+		if (win.location.origin === "https://www.kasandbox.org" && (loadString || WebGL-experiment.toString().length !== 183240)) {
 			// Prevent Ctrl F
 			message.innerHTML = '.oot lanigiro eht tuo kcehc ot>rb<erus eb ,siht ekil uoy fI>rb<.dralliW yb >a/<nahKeniM>"wen_"=tegrat "8676731005517465/cm/sc/gro.ymedacanahk.www//:sptth"=ferh a< fo>rb<ffo-nips a si margorp sihT'.split("").reverse().join("")
 		}
@@ -8408,7 +8408,7 @@ async function MineKhan() {
 }
 
 window.onload = async function() {
-	var init = await MineKhan()
+	var init = await WebGL-experiment()
 	if (window.parent.raf) {
 		window.cancelAnimationFrame(window.parent.raf)
 		console.log("Canceled", window.parent.raf)
