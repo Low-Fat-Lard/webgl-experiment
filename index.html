@@ -5713,7 +5713,7 @@ async function WebGL_experiment() {
 	let playerDistances = []
 	let currentUser = { username: "Player" }
 	async function loggedIn() {
-		let exists = await fetch("https://server.low-fat-lard.repl.co/account").then(res => res.text()).catch(() => "401")
+		let exists = await fetch("https://server.guineapigbridge.repl.co/account").then(res => res.text()).catch(() => "401")
 		if (!exists || exists === "401") {
 			if (location.href.startsWith("https://low-fat-lard.github.io/")) {
 				alert("You're not logged in. Head over to https://low-fat-lard.github.io/login to login or register before connecting to the server.")
@@ -5737,7 +5737,7 @@ async function WebGL_experiment() {
 			target = world.id
 			host = true
 		}
-		multiplayer = new WebSocket("wss://server.low-fat-lard.repl.co/ws?target=" + target)
+		multiplayer = new WebSocket("wss://server.guineapigbridge.repl.co/ws?target=" + target)
 		multiplayer.onopen = () => {
 			multiplayer.send(JSON.stringify({
 				type: "connect"
@@ -5861,7 +5861,7 @@ async function WebGL_experiment() {
 		let logged = await loggedIn()
 		if (!logged) return []
 
-		return await fetch("https://server.low-fat-lard.repl.co/worlds").then(res => res.json())
+		return await fetch("https://server.guineapigbridge.co/worlds").then(res => res.json())
 	}
 
 	let fogDist = 16
