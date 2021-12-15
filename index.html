@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- @WebGl Experiment version Alpha 1.0.3
+<!-- @MineKhan version Alpha 1.0.3
 
 	NOTE:
 The "Save" button saves your world to your local browser. Nobody else can see it. However, if you're on a public or shared computer, that save may be deleted unexpectedly. So it's a good idea to keep a safe copy of your save string somewhere where it won't be deleted.
@@ -36,20 +36,6 @@ To share your save with other people, copy your world string into the "loadStrin
  * H for Hyper builder
  * O to toggle third person mode
 
-	Notes and accreditation:
-!!Willard is another person, not me!!
-My credits (not Willard's)
- * Thanks to Red Monster (https://www.khanacademy.org/profile/monsterred) for the block shapes
- * Shoos10 (https://www.khanacademy.org/profile/kaid_651789387350300127259402) created the Island World type
- * I created the survival mode
-
-Willard's credits
- * This program (Webgl Experiment) was made by Willard (me). The original is https://www.khanacademy.org/cs/mc/5647155001376768 (just adding this so that spin-offs have it)
- * Zushah helped me with some of the menus in the 0.6 update via GitHub. https://www.khanacademy.org/profile/zushah77
- * Element118 helped speed up the process of adding new textures significantly. https://www.khanacademy.org/profile/element118
- * Danielkshin made the current main menu background. https://www.khanacademy.org/profile/danielkshin
-
- * This program originated as a spin-off of ScusCraft by ScusX.
  * It's 99% different code at this point, but I still never would have made it this far without his code for reference.
  * ScusCraft can be found here: https://www.khanacademy.org/computer-programming/scuscraft-3d/5145400332058624
  * My original spin-off can be found here: https://www.khanacademy.org/computer-programming/high-performance-minecraft/5330738124357632
@@ -93,16 +79,10 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Webgl-Experiment</title>
-    <base href="https://low-fat-lard.github.io/webgl-experiment/">
+		<title>WebGl Creaft</title>
     <!--Metadata-->
-    <meta name="keywords" content="WebGl Experiment"> <!--search "Minekhan" on Google-->
-    <meta name="description" content="Basically Minecraft with survival and nether and many more features">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" id="themeColor">
-    
-		<link id="vtfont" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <style>@font-face{font-family: 'VT323'; src:url('mojangles.ttf');}</style>
 		<link rel="shortcut icon" type="image/ico" href="favicon.ico">
     <link rel="manifest" href="manifest.json">
 	</head>
@@ -136,7 +116,7 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
 			height: auto;
 			border: 1px solid black;
 			font-size: 13px;
-			font-family: 'VT323', 'Courier New', Courier, monospace;
+			font-family: 'monospace', 'Courier New', Courier, monospace;
 			color: rgb(180, 180, 180);
 			margin: 0 auto;
 			margin-top: 15px;
@@ -147,13 +127,14 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
     .world .thumbnail{
       float:left;
       margin-right:8px;
+	  margin-top: -5px;
       width:70px;
       height:70px;
     }
     .world .thumbnailHover{
       position:absolute;
       left:5px;
-      top:5px;
+	  margin-top: -5px;
       background:#fff8;
       opacity:0;
       width:70px;
@@ -182,7 +163,7 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
     }
     .world-select .message{
       font-size: 15px;
-			font-family: 'VT323', 'Courier New', Courier, monospace;
+			font-family: 'monospace', 'Courier New', Courier, monospace;
 			color: rgb(180, 180, 180);
       margin-top: 15px;
       text-align:center;
@@ -220,7 +201,7 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
 		#onhover {
 			background-color: rgba(0, 0, 0, 0.9);
 			color: rgb(200, 200, 200);
-			font-family: VT323, 'Courier New', Courier, monospace;
+			font-family: monospace, 'Courier New', Courier, monospace;
       font-size:13px;
 			word-wrap: normal;
 			width: auto;
@@ -245,20 +226,27 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
     #messagesHolder{
       position:absolute;
       z-index:2;
-      top:0px;
-      left:0px;
       background:#000a;
       color:white;
-      font:18px 'VT323';
-      max-height:100%;
+      top: 10px;
+      overflow-y: scroll;
+      left: 50px;
+      height: 500px;
+      width: 50%;
+      font-family: 'monospace';
+      max-height:60%;
     }
     #messageInput{
       border:none;
       background:transparent;
-      width:100%;
+      width:90%;
+      bottom: 10px;
+      background:#000a;
+      position: fixed;
       min-width:100px;
+      margin-top: 50px;
       color:white;
-      font:18px 'VT323';
+      font:18px 'monospace';
     }
     /*#messages{
       display: flex;
@@ -319,7 +307,7 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
       width:433px;
       /*
         font-size:60px;
-        font-family:VT323;
+        font-family:monospace;
       */
     }
     #loader .name > img{
@@ -355,9 +343,14 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
 	<div class="world-select hidden" id="worlds"></div>
   <div class="world-select hidden" id="servers"></div>
   <div class="world-select hidden" id="marketplace"></div>
+  <div id="chat" class="hidden"></div>
 	<p id="message" class="hidden" style="position: absolute; top: 10px; right: 10px; z-index: 1; text-align: right; background-color: rgba(255, 255, 255, 0.3);"></p>
   <div id="messagesHolder" class="hidden">
     <input id="messageInput" class="hidden">
+    <datalist id="commands">
+		<option>/ban</option>
+ 		<option>/online</option>
+	</datalist>
     <div id="messages"></div>
   </div>
   <div id="onscreenControls" class="hidden">
@@ -376,7 +369,7 @@ This isn't entirely necessary, but it's considered best practice. Some OpenGL ES
     </div>-->
   </div>
   <div id="loader">
-    <div class="name"><img src="https://data.thingmaker.repl.co/images/minekhan.png"></div><br>
+    <div class="name"><h1>WebGL CRAFT</h1></div><br>
     <img src="https://data.thingmaker.repl.co/images/loading.gif" id="loadingImg"><br><br>
     <div id="loadBar">
       <div></div>
@@ -760,39 +753,6 @@ function MineKhan() {
     return [r,g,b]
   }
 	const textures = {
-		grassTop: n => {
-			for (let x = 0; x < 16; ++x) {
-				for (let y = 0; y < 16; ++y) {
-					const d = Math.random() * 0.25 + 0.65;
-
-					const r = 0x54 * d;
-					const g = 0xa0 * d;
-					const b = 0x48 * d;
-
-					setPixel(n, x, y, r, g, b);
-				}
-			}
-		},
-		grassSide: n => {
-			const pix = getPixels("0g0g70ordrzz0u30g730wa4vzz0xnyl8f11lrk7315qj7jz1fh47pb6553365533033636350335403653650063306333633300635163503655353653535605335031350330553500033033366333433663663535336655335055335553353530355333033503300333336635353663650660554353355635155305303053556333333366353323553060365553063030663533555365534355335530");
-
-			for (let i = 0; i < pix.length; i += 4) {
-				setPixel(n, i >> 2 & 15, i >> 6, pix[i], pix[i + 1], pix[i + 2], pix[i + 3]);
-			}
-
-			const { random } = Math;
-
-			for (let x = 0; x < 16; ++x) {
-				const m = random() * 4 + 1;
-				for (let y = 0; y < m; ++y) {
-					const d = random() * 0.25 + 0.65;
-					const r = 0x54 * d;
-					const g = 0xa0 * d;
-					const b = 0x48 * d;
-					setPixel(n, x, y, r, g, b);
-				}
-			}
-		},
 		leaves: n => {
 			const { floor, random } = Math;
 
@@ -832,7 +792,7 @@ function MineKhan() {
 				}
 			}
 		},*/
-    oakPlanks: "0g0g70ru00lb0yicsfz156v7cv17fehvj1bvja4f1f7pou71hfxp8f5456666656666652554423455544553345554543333445522112210011010010563666636665443545543432344555543345444255544333001121000011121056654466666666535455554333434332654433334444335300122100012110006356655366636566445533433554544443345432554333330110012221010000",
+    oakPlanks: "0g0g816anym018ivzso1czc2601jo04541lwjdvc1o4rgmw1utfim01x1njso4676677667667677255555555555555525254445455344252555555555555555254455344454454525255555555555252543445454355445011000011000011066766776764676765555555555255555454354442525254555555555552555555454344445255445555555552525255545445444552554451100110011010101",
 		hitbox: n => {
 			for (let x = 0; x < 16; ++x) {
 				for (let y = 0; y < 16; ++y) {
@@ -857,24 +817,26 @@ function MineKhan() {
 				}
 			}
 		},
-		dirt: "0g0g70ordrzz0u30g730wa4vzz0xnyl8f11lrk7315qj7jz1fh47pb6553365533033636350335403653650063306333633300635163503655353653535605335031350330553500033033366333433663663535336655335055335553353530355333033503300333336635353663650660554353355635155305303053556333333366353323553060365553063030663533555365534355335530",
-		stone: "0g0g40sywflr0wb8hdr0zdjj0f13tzldr3333211210112222221212222220012121001110111222222233232233222111122111212333312223222222211010131223331331112222110010112211122233323223332222212232223332233332021211001212211122222332222233232111232112200101332112211122111321122222222233332222221123322122",
-		logSide: "0g0g60fl1ssf0l5j1fj0qftm2n0wa7mdb14cs7wf16az8xr3143304330341432315230523034133230223052313113324032313232301342413230325232314343134131524131432313422343433143230343243342324331053324324242433315332332414303333432303231430331343230533053135133424052303323531343314231333343143340313114334314134131331432",
-		logTop: "0g0g90l5j1fj0qftm2n0wa7mdb0z2esxr15quebj189da7z1cpma671f7ppfj1hzyayn1012101120110111077776768667777017334454555544811738877776777471164766666666756107576445544674601646636666466471165764655656756116576465464674610657646666566460164764434556756116576666666674610757767777787460175454444444447117776676686677711011101120110211",
+		dirt: "0g0gm0k1dlvc0m9acxk0m9aeig0m9x0c80ma8c1k0oh75ko0ohie480ohifp40ohiha00ohtreg0oigd880qpf56g0qpqdq00qpqfaw0qpqgvs0sxn6d40sxyewo0v5jxfc0v5v5yw0xdrx140xdrym00xe375klffcfl0f6606ll0l6066ci3866f6ii02j66b0666fb626i00ffkf006lbdad2ff6f6fk06cc26fecif662bffc20226cb66fc006l406dlllffcilllagc6dfliff65fcccccf21d6dfd2d6ff0h20h2666flajffff226l026icgkl05fffili63cd6bfa020fff7a6cb606illbfb666f22b02flgffbi769a0d521ljfffff2fa42ff26cff0",
+		grassTop: "0g0g70k3vldk0k46tx40mc3kzc0mcev3s0okmupk0okmwag0t12x2w2631135045241346144445411436351051611424515413144532420131401142030250325223135052154531651552044231145214532032121315325040645550452042130120240314645153021252425311440510465300454315211201214112036210215314125051254523213056241140030545641411540614114511",
+        grassSide: "0g0gy0dcplh40ddncoo0fkxl2w0fmhuyg0fmt3i00hsuc540ht5m9k0hupuk80hv14oo0k1dlvc0k394ag0k3kcu00k3keew0k3vldk0k46tx40m9acxk0m9aeig0mbh5h40mbse0o0mc3kzc0mcev3s0ohie480ohifp40ohtmns0ojp52w0ok0f7c0okbnqw0okmupk0okmwag0qpf56g0qpqdq00sxn6d40t12x2w0xe375kjwkeeksdrsjrekrwerrrrsreerkwkseeseweerjrsesrekeerskeeeeekeedeereeedjeeeeeeeeekseeeeerskeeeeeejdrejkeersjerskjdeeejekeskjsdrdwreeo4ipa4piiqa488cp3n4ap0c4hb77f7c7a6cf12f61c456pllglgvttlllggu9vl2g9vuvvxlullgllxxlvllmlvvgux9lxvvvluxg9g9glg9guvvvvxvvlllvvulvvl9",
+        stone: "0g0g40v74gs80xfchyw0znkj5k11vskc81111121112211222222111111111122311122212211122221111222211221122111111222221111122221222111122111222222211122211222111111111122212121121111112221111122222111211211122211112222222221111121112221122211122222221121111011222111121122111122211121111111112222221",
+		logSide: "0g0ge0b4suew0dcplh40dd0u0o0dd0vlk0fkxmns0fl8v7c0ht5m9k0ht5nug0htgwe00k1dng80m9ln200ohie480ohifp40qpqfaw399a4aa1666a9a9b56960a16a06a5a3a04656a06a46a3a5a9360aa06a0670a2a9196aa9695974a0a9596a66990964a096a59a660a0a50a499a49a0d5a4a36a099a09a19595a0990a9a569a2990a59a5a3a096a0604a09a5a4a069a5944a09a0a0a469a0906a4964a59496a3996809aa046609c6096a46a0646a469609960696c",
+		logTop: "0g0gt0b4suew0fkxmns0fl8v7c0ht5m9k0k1dng80m9ln200zmb8c811u7zeg11uj7y01424qgo142fz08142g0l4142r94o142rapk1432j9416ao06w16azabc18ikr9418iksu018iw1dk18j7bi01aqssfs1ar42k81arfb3s1arfcoo1cz0s1k1cz0tmg1czc3qw1f7k3co44044300044044444msssssmjjmmrkg30mlhifihjpiiibg44mjossmssrsrg8g00mbsfjppppf8g8g40mhsfmsmsss7g7g40sirhnllqac7m8g00sisfnfmmad6g8g54sjsfmlmmac7g7k44shsfmbbf9c7gfg43siofmccccc8g8g30mijf7767776g8g30miggggggggge8g02mb88f8878b8bpg00ggggjdjggcgggg44404430444440104",
 		bedrock: "0g0g509gy58f0e7f7r30o8fd330rkrev31627mkf3111124324211212133434341443012110110111412224232433202422111112014111121134433112221221102211014432344323443410222122211011213234421122344344442110121213211143334134410144431102221123442334402111321134111112343420211101234433211211234421121011044312301123",
 		glass: "0g0g50ybfh8f0znkiyo12rzshr1au95hb1lytipr4444444444444443411111111111111341114111111111104114111111111110413111111111111041111111111111124111111111111110411111111111111241111111111111124111111111111112411111111111111241111111111111123111111111111412411111111111411231111111111111133323222222222233",
-		cobblestone: "0g0g60muaccf0r0pekf0un11q711vr5rz1a8mosf1ef1r0f2144011454313543145330554330132314342143342101321132113232134310021354131154443152453321033543234313433211243215332233213541231321542213533311021543232233121341323231101221044532211235411035532354215434213323154331432332113244323212332143111311232121135432",
+		cobblestone: "0g0gf0oigd880oirlrs0qqocu00qqoeew0qqzmyg0sywe0o0sywflk0sz7o540v74gs80xfcge00xfchyw0xfnqig0znkj5k11vskc811w3svs36bc9d83ada6eca3adcddcccaddb6c88dcbbcdc8dccbd6cddacccd6dcccad3dddaacccadcccccc69ecccb664cacccbaebdd7acccaccccb6bac8acbcd3cbb7888968cccaa26887d86aa678a363133eeedc67ac26bddd6dcccd78eed2dddec6acbb38ddc87cabbb69643bb9b86dcaac6caa06dcc7633ca67ac72b6675eba33eb3a",
 		mossyCobble: "0g0gb0muaccf0mupnnj0p38xdr0r0pekf0rbmj9b0un11q70w1wkxr0y07svz11vr5rz1a8mosf1ef1r0f4199211276438a9619a8812764813858398951644251118533852182851464110531183233866642a176895308948428981498852118851988111851664158385117641484642305126244558824124185442111155214698112124761318998127651764653885847488164588511858685851588531841183352111338a984",
 		stoneBricks: "0g0g70p2gyyn0rkrev30tj2nlr0xf9ou70zdjj0f12psrnj17g8flr5666666666665550645455555444445065454444445534406434554345434330632334544334324053244333345324302222222222222220110011000111111166666650566666663555544065455554544544306435354445544320634344454444343053345433332322305443344322222220222222221111110000111111",
 		mossyStoneBricks: "0g0gc0mupnnj0p2gyyn0p38xdr0rbmj9b0rkrev30tj2nlr0w1wkxr0xf9ou70y07svz0zdjj0f12psrnj17g8flrab3668863b88a680b9a28683a9999332ba926363996a2931b9792a679a979721b737793993697591a72397773632297075225752332277924410441110000444886bbba1abbbb6883aaaa991ba9aaaa6a99a9971b97a7a399aa99351b797992a99997371a689a97777573371a897799755223791722757754000041110004400",
 		bricks: "0g0g90vz62nz0yhavi712oqn7j13rinsv173m8lb193f4zj1b1w1rz1d7u7sv1j1u51b7742888777458777443513444435144410060033100503112256522225565222887747458777474214444315133333151341110600133105522225565522225677458887474588774435344444153444110511331106133325565222225652224777474287774745144444353444441501111106011111065222225655222566",
 		lapisOre: "0g0ge04hvenz04hvkzj04ihywv05mg64f06r1a7z08z3da70izhb0f0pmkdtr0sywflr0t0n08v0wb8hdr0yjgikf12zwkxr18kgnwfcbbcbaaba8aabcccbb8778accbb877baba4543877aac13bbcbcdc2a36cbbdcaaabbaa77acb77cabbbcb8742bb851a8acab716963cb69ccbba26dddc788bdaccbc69dcb827433b77abddb8b82466382888b882aa8169ca65bbb300bbcddcbc96bbaddc0883668d16cccba694b691daddbbaab463dbddbaaabbbbbcddbbbbbbbcc",
-    redstoneOre: "0g0ge0syfif30sywflr0wb8hdr0yjgikf143uygv152bwu7152hjwf1gbiqdb1idy29r1jhwfsv1vqcf0f1xx5on31y0rf271y2hgqn4444322321223333332323333331123232112100222333333332166611223222232969bc8532023334248bdb74339a24233347774232343320012122332000332ac6433446969ca236a33344437cda73132322112327772233311000333344343226a9a60339a4124434cd742234422432234743333344443333332234433233",
+    redstoneOre: "0g0ga0zo74zc11wf660144n7co16cv8jc1ancqns1lr7qig1ww0hko1wxl0xk1wzrlko1x10mwo2222232212232232222322222238982128202238998765212528981566764422342567844444322222244652899808932232244356651561228223224675256122428982244434422223566823222232389156752389828225614444386652432442223215644220222389821441222123225652322122222222444212222232",
     emeraldOre: "0g0gc004op3305rfklb05sdfr307xmd4v0eiutxb0i0nv270mb61of0sywflr0wb8hdr0yjgikf12zwkxr1o7fjsvaaaa98898788999999669aaaa966789896b2889986b2999999209969aa20a8888999a6499aaaa8999a9aa5536887878a89745b03498996698664503146886b296b2913aa88999208920aaa99a9667aa97a899a9795547888999999a905b0399a9888669801031878aa96b298843aa88a988920a97aa99aaa9999aa889aaa9899",
-    diamondOre: "0g0ga07ztywv091fqin0rusf0f0wb8hdr0wfmb5r0yjgikf12zwkxr1315q7z18kgnwf1n3h8n36556533532335666553526666553223553220652233241556665762417657633355532267535635556532942539432363369400175015555622678772267568824076532943555635775253401176885253503267762233355555666632416655362256349400163667412358107765553376665567533355555553655555566",
-    goldOre: "0g0ga0pmkdtr0sywflr0wb8hdr0yjgikf12zwkxr17em5tr18kgnwf1sjgzy71y6dkvz1y70nb34444222321223333332353313331103232114105122005533443105752305752233105785144776334317889722166242334678756223333221126766322275341574656443313323278636443000143146642112055711233111443157798513255723526788662457898462357622432678433336644743334632234433233",
-    ironOre: "0g0g90sywflr0walse70wb8hdr0yjgikf11v06pr12zwkxr1bvjgfz1o4aozj1qczo5b5333322320222255332003355314413232464230223463333467532000233222255520044664002335334677876324652335556775323553223002555320033355046002314612323516677535675553035578502355322233335535333145353202465214677642546235325678655335412333355553333355332233553233",
-    coalOre: "0g0ga0a105j30c986pr0ehg7wf0flptz30k208hr0pmkdtr0sywflr0wb8hdr0yjgikf12zwkxr9999877876778888887878555886658787667503257812888577813241088777702777510057778889987899977556797987577787313588757503158853489997803421878777878975125779988558689755878777503688557588785577778504200995430766975305777520577887778821885888998877789789988788",
+    diamondOre: "0g0ga02cx4hk02ehnug0fqw5bs0zo74zc0zqea6011wf660144n7co16cv8jc1hj8iyg1x2x0xk6666676656676676666766666674946564636674994821656164945122820066706128400000766666600216499434976676600712215125664667660281612566064946600070066667122467666676748512816749464661250000742216076006667651200663666749465005666567661216766566666666000656666676",
+    goldOre: "0g0gt06oo3qw0b546480flk8hk0hts83c0k207p40ma87aw0ma88vs0oigd880qqo9o80sywauw0sywcfs0sywe0o0sywflk0v74gs80xfcet40xfchyw0znkhko0znkj5k11vskc81440gs81asoflk1d0wf7c1f94ge01f94hyw1hhcj5k1lxsliw1smgttk1x2wzco1x2x0xkfffffhfffhhffhhhhhhffffffffffhhifffhlkfhhffrkhhhffffsdhhffhk0fhhffff18hssssfffffhhhh6hhpsssghhfffhhhhhkmosqdhhffhhhfffmmlsfcfhhhfhfhffjn72dcfphhfffffha7002bf8ffhffsseh4454hhhhhhhh9m3fffhfffhhhffhh99ffhhsmhhhffhffffdffhm9ffffhffhhffffhhhfffhfffffffffhhhhhhf",
+    ironOre: "0g0gc0ma8c1k0qqoeew0v74id40znkj5k0zo74zc11wf660144n7co16cv8jc18kgnw81f94rg81lxsv081x2x0xk666667665667667666676666667aba656a64667abba88365686aba5389880166716388a10001766666610836abba4ab7667661173883538566a66766189363856686aba6600170166667388a676666767ab5389367aba6a6638510017a88368761066676538016646667aba65105666567662836766566666666101656666676",
+    coalOre: "0g0gg000006w0287zso02881dk04gg0zc06oo26006oo3qw08ww3co08ww4xk0b544jc0flk5bs0hts9o80sywcfs0sywflk0xfchyw0znkj5k11vskc8dddddedddeeddeeeeeeddddddddddeefdd00eeb6cddddeeed070de22cde709eed300cdcceee000cdec8cdeceddd21cdddecded3ddddcceddeeedd5700ddddeeedede47700dddd74ed1dd50000cd3d11cedddd000cdddccccedeedcccdedddeeeddeeedddeeea1cedde70dd6ddee00cdded20cddddeecccdeddccdddddeeeeeed",
 		coalBlock: "0g0g501e50xr03md24f05ul3b308mtq0v0bf3ri73322122002210012222121000210123321000122000022221001243222202210001233222100210020222221000001220132211001122222022210122343221002110123322210000012123221103200212122210002211232102112210012230002113432123322000123420023221000123210012221001222212212221000",
 		ironBlock: "0g0gb1dawbnj1fj5rlr1hrdssf1m7r1mn1nlyvwf1pa4wsf1qe8xdr1s2ey9r1t6iyv31tqkz5r1ver01r32233333333222232aaaaa9998777772277777777777777105555555666444402aaaaaa999777771277777777777777105555566664444402aa9999977777771277777777777777105555555566644402aaaaaa999977771277777777777777105555556666444402aaaa9999777777127777777777777712222222112111111",
 		goldBlock: "0g0g91kr8um71mphb0f1w77ain1xakkqn1ypvwu71yr43jz1yzk7pb1z0cef31z10mwv2222332223333221285577888776688125664877623324812564877462224471374777462264467137777462267762302877444667762330287444664462232037444664466222613744664466662461364667766666742032667762262776203267762332446261334462332666224132322332662264701101100011001100",
@@ -900,7 +862,7 @@ function MineKhan() {
 		spruceLogSide: "0g0g60csc9vj0cskpof0dmmb5r0geuxof0lf4i670nnb4sf3243304330342431325130513034233130113051323223314031323131302341423130315131324343234232514232431323411343433243130343143341314332053314314141433325331331424303333431303132430332343130533053235233414051303313532343324132333343243340323224334324234232332431",
 		spruceLogTop: "0g0g80ix87pb0nnb4sf0p1n6db0qzu7zz0v5xypr0xy569r106bshr11ueyv31012101120110111066665657556666016223343444433711627766665666361153655555555645106465334433563501535525555355361154653533545645115465353353563510546535555455350153653323445645115465555555563510646656666676350164343333333336116665565575566611011101120110211",
 		sprucePlanks: "0g0g80nnb4sf0p1n6db0qzu7zz0v5xypr0xe36rj0xy569r106bshr11ueyv36567777767777762665523566655663356665643333556622112210011010010673777737776553656653532355666653356555266655333001121000011121067765577777777636566665333535332765533335555336300122100012110007367766377737677556633533665655553356532665333330110012221010000",
-		sand: "0g0g61m6x62n1nb9nnj1opn5dr1r80f7j1scbi0v1u0izgf4223213232132313122121130142502432011422222121122331213133132122125213232322122321223332123122121421151211022121212212212111242112322310131232124212221120212231202321232232012311223212331112121213132145321123323230232323221223235332323203223232332321223232",
+		sand: "0g0gx16bluk81as1yig1asd7201d09y481d09zp41d0l6ns1d0l88o1d0wid41f8hzaw1f8i0vs1f8t7ug1f8t9fc1f8tb081hgery01hgq0hk1hgq22g1hh19141hh1am01hh1c6w1joy1o81joy3941jp9a7s1jp9bso1jp9ddk1lwuubc1lx62uw1lx64fs1lxhczc1lxhek81o5e77c1o5pe601o5pfqw1slu9konhgghb9hmmeh3u89ebn918ahcfqb7bhjhfqa888e2eee8bbb9hbhhh9e368s3ea3hjueckjdhb6whek38ebt6hb4hr68qkjn5j3mhbbhhh8kekjfi9hbae6fbhf8f6mf8fqjbanbee3eajem3bh6j9h83abqeo86bjnf3f6beh8babhaeeb93be8wbbe88b4wb6jmb89bleh66eev6r2h39mefffg8fehfhah0ei362ej9ak6he6h9hkapea808b",
 		gravel: "0g0g80rufq4f0vqwlbz0zxiprz125i9rz15rvcan1627mkf1d0twqn1dackxr0341152512122521522122312102333522103133522351352232321522512322132741122210253202140133526552213104226515530122553253522311225353521223310256122311652152322132123553102521325022533562113225212132222537415525331025232422215235323311243310351274122232321212",
 		blackConcrete: "0g0g40149on3028826702882yn028dp8f1330112022012232303130022112212111032203010022012122012222321221011223213030101033110011212233120230013131003200032022012002002112233122202312230200102211312102222122132011021201223320211021220121122122321331201102120210001220112022023302312210123220102110",
 		blackWool: "0g0gf0149on3028826702882yn028dp8f03cc2rj03cc3jz03chptr04gg3cv04glqf305kk3y705kpr0f06oo4jj07ss54v08ww5q70a106bj46348b45ab13993299eebb7742570367bc77dc97bcbbdeb996bc768c47cc96ec9749bb115953bb31314c414641672547eebb8879bea7eeb966eebacc45bca9ccbb35ca4657528733577b117949ee7beeccbbecbacb799839349966bb445911796611cd318b9bee92badecb9717bc77cedc97c99beb559b6424c946cd76ac44bc",
@@ -1155,13 +1117,7 @@ function MineKhan() {
     ladder: "0g0g700000000fl385b0m9fzzz0ru00lb0yicsfz156v7cv1e3g0e70052000000005200046456566665646003432333333243300021000000002100005200000000520006645666565564600343233333324330002100000000210000520000000052000664566666656440034323333332433000210000000021000052000000005200066456566665646003432333333243300021000000002100",
 		vine: "0g0g500000000ok5z3z0qse0an0u4q22n0zpa51b0002143113023440033213000202134044312000004311004321000004432100002100000112320003221002210032111332331230032100200234403032440000001340000234000000210000321330000031000021000000132130044100001332133004321021043110300302111303211000001220020021232021013300",
     
-    Water: function(n){
-      var pix = getPixels("0g0g819okofo1bwspmc1hhcsl01ktoud01lxsuyc1n1wvjo1x2x0vo1y711h02111000111112435000011111100000011000000112221001000122111221111001110000100011100101121112110002111111111114472434111211111112277424742121221140000000000000100100001000112111100000000000000010000000000010000100001111122101000000001127732101211466211211111")
-      for (let i = 0; i < pix.length; i += 4) {
-        let bright = pix[i]/255
-				setPixel(n, i >> 2 & 15, i >> 6, bright*10, bright*30, bright*255, pix[i + 3]);
-			}
-    },
+    Water: "0g0ga08z3etk08zend408zeoy008zpxhk08zpz2g090161409017m0090196w0b7y0940hwaqiw3600022777032200351013270002220025222132781322306262011361221024116010076330006200700241262002600804116000622500000166002272352022022700221773300222060122170321002261011207032010179222301622226662723310105206123207311121366121301610011321122600026003332111",
     Lava: "0g0gp1jjxhbz1jjxi4f1jk33lr1knvuv31ko1hxb1lsrytb1lsrzlr1mwqd4v1o1mhvj1o1minz1p5kven1p5kw731p67ev31p6io731qa5se71qabfgf1qaxxbz1qaxy4f1rewbnj1sjmuwv1sjmvpb1to7sov1ut3zsv1ut9m2n1y687b3965ckke60666999cf996f8c66cd69fjddd96606669f67hold967629c96669lll966666dhc9969jfh97666chh69df699c96999kk969kd69f99696dlnf069536669ha66fh960066456hhk97690017ll66chgl96000009ml5696969hg63066862666666kl7066c60068li69990669d6609knldh66046699hb6hefckh960656fhd69",
     
     craftingTableTop: "0g0g903c6e4f06oif3z0hsj18f0k0r37j0nd8r9b0v4xd6n17dojcv1bu4kxr1gbtpfj1001255555521011088267777776288008277777777772801274344433334721267467477377476257747736746747755774434434434775577477477477477557747747747747755773334334434775577367376377477526746737736747621274434444444721082777777777728018826777777628811101255555521001",
@@ -1456,7 +1412,7 @@ function MineKhan() {
     snow: "0g0g31uv5wxr1vz4agv1y711j31222211212222111222222100222121222221000022022222210000222001222220001122001222211001212210122121221102212122201221200122122200022210221012210022100121000120012120022200120211121222210010012212222110011112222222110011121220012200011122220011112111122220011",
     powderSnow: "0g0g31tr1wcf1vz4agv1y711j31222211212222111222222102222121222221020022022222210200222001222220201122021222211201212210122121221102212122201221200122122200022210221012212022102121000120012120022202120211121222210010212212222110012112222222112011121220012200011122220211112112122220011",
     snowGrass: n => {
-			const pix = getPixels("0g0g70ordrzz0u30g730wa4vzz0xnyl8f11lrk7315qj7jz1fh47pb6553365533033636350335403653650063306333633300635163503655353653535605335031350330553500033033366333433663663535336655335055335553353530355333033503300333336635353663650660554353355635155305303053556333333366353323553060365553063030663533555365534355335530");
+			const pix = getPixels("0g0ga0fqw5bs0oh73zs0ongyd40qpf56g0sxbw8o0v5jvug0xdrx14147gs1k1lzd9mg1uv09vc9998999998999999799982788727999889972889988727878898728887288998288820288212888208821707873128213280328299660801330350708975303334455303882553555566653308054455555665553804445645445545605555545553455553344545565555554434555566654335555566555555543455566555");
 
 			for (let i = 0; i < pix.length; i += 4) {
 				setPixel(n, i >> 2 & 15, i >> 6, pix[i], pix[i + 1], pix[i + 2], pix[i + 3]);
@@ -1475,6 +1431,7 @@ function MineKhan() {
 				}
 			}
 		},
+	snowgrassTop: "0g0g41jr5a0o1o7a0oo1uv09vc1x2x0xk0112211222222210021233322333322123323322223211222222112211001233121012222110222123210232222222222332221123332100012222222332221101122210111222222233320002221122222332222221112312112212332222212220122220011210232222221101222233321002222233222222210122233222",
     snowball: "0g0g700000000xh2jnj1bxw73z1hian0f1lz1zi71sn3itb1y711j30000000000000000000000000000000000000022220000000000224554210000000245646542100000025656656410000025466656452100002466666654310000245656545341000023356565342100000243354333100000012333334210000000112432110000000000111100000000000000000000000000000000000000",
     powderSnowBucket: "0g0gb00000000ehg7wf0v74gsf0va9d6n1584m4f1asop331gfa3un1o60w731pb2r5r1uv5wxr1y711j30000003333000000000003aa8630000000013aa968631000001369868a83610000163a9a8636310000111388686111000017511116124100001777755628410000177a755422510000157a755622510000127a755422410000017775542410000001577544241000000015754241000000000111111000000000000000000000",
     
@@ -1769,11 +1726,11 @@ function MineKhan() {
           if(world.type === "nether"){
             world = dimensions.overworld
             //world.loadSave(world.getSaveString())
-            //changeScene("loading")
+            changeScene("loading")
           }else{
             world = dimensions.nether
             //world.loadSave(world.getSaveString())
-            //changeScene("netherLoading")
+            changeScene("netherLoading")
           }
         }
       },
@@ -3602,59 +3559,7 @@ function MineKhan() {
       breakTypes[b] = allPickaxes
     }
   }
-  
-  var achievementTypes = {
-    "Taking Inventory":{
-      score: 10,
-      description:"Open your inventory"
-    },
-    "Getting Wood":{
-      score:10,
-      description:"Punch a tree until a block of wood pops out."
-    },
-    "Benchmaking":{
-      score:10,
-      description:"Craft a Crafting Table with four blocks of wooden planks."
-    },
-    "Time to Mine!":{
-      score:10,
-      description:"Use planks and sticks to make a pickaxe."
-    },
-    "Getting an Upgrade":{
-      score:15,
-      description:"Construct a better pickaxe."
-    },
-    "Bake Bread":{
-      score:15,
-      description:"Turn wheat into bread."
-    },
-    "Time to Strike!":{
-      score:10,
-      description:"Use planks and sticks to make a sword."
-    },
-    "DIAMONDS!":{
-      score:20,
-      description:"Acquire diamonds with your iron tools."
-    },
-    "Diamonds to you!":{ //how is this possible to code???
-      score:15,
-      description:"Throw diamonds at another player."
-    },
-  }
-  for(var a in achievementTypes){
-    achievementTypes[a].name = a
-  }
-  var achievments = []
-  function achievment(name){
-    var a = achievementTypes[name]
-    if(!a) return console.log("No such achievment: "+name)
-    if(achievments.includes(name)) return
-    if(cheats) return
-    achievments.push(name)
-    sideMessage("Achievment made: "+a.name, a.description)
-    if(multiplayer) send({type:"achievment",data:a.name})
-  }
-  
+    
 	// implementation of xxHash
 	const {
 		seedHash,
@@ -4265,7 +4170,7 @@ function MineKhan() {
 		}
 	}
 	function textSize(size) {
-		ctx.font = size + 'px VT323' // VT323
+		ctx.font = size + 'px monospace' // monospace
 	}
 	let strokeWeight = function(num) {
 		ctx.lineWidth = num
@@ -4373,8 +4278,7 @@ function MineKhan() {
       surviv: world.getSurvivStr(),
       ent: world.getEntities(),
       mod: world.mod,
-      thumbnail: genWorldImage(),
-      achievments:achievments
+      thumbnail: genWorldImage()
 		}).then(() => world.edited = Date.now()).catch(e => console.error(e))
 	}
   win.save = save
@@ -4399,7 +4303,7 @@ function MineKhan() {
 	//globals
 	//{
 	let version = "Alpha 1.0.3"
-  doc.title = "MineKhan "+version
+  doc.title = "WebGl Craft "+version
   let normReach = 5
   let bigReach = 40
   let reach = normReach // Max distance player can place or break blocks
@@ -4553,7 +4457,6 @@ function MineKhan() {
 	let blockOutlines = false
 	let blockFill = true
 	let updateHUD = true
-  
   let images = {
     attackIndicatorCrosshair: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAHBAMAAAC8U9OhAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAKlBMVEUAAAD///86OzzS0tbX2erq7PI6OzxbSkmCbWxtWVfX2er////q7PL///+PAAbaAAAABnRSTlMAAAAAAABupgeRAAAAAWJLR0QN9rRh9QAAAAd0SU1FB+UICBISCBYUzEAAAAABb3JOVAHPoneaAAAASklEQVQI12NgYGOAAHYwyQilGRjSoKCzcxUYQOnVMAmFzs4zu4HABEobMKAZxeIAMwoNMAoKigouAWIsEoJRqxwFA7HpCFkClAAAVfMfb4rLipMAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDgtMDhUMTg6MTc6MTgrMDA6MDB6HTijAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA4LTA4VDE4OjE3OjE4KzAwOjAwC0CAHwAAAABJRU5ErkJggg==",
     deadHeart: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAT0lEQVQoU62OwQ3AMAwCz1N4//E8RSqjuiVRn/ULocMQvLduGYBr2uhbmSlRVbgGQqkx7esjO/QvtG3yyq6aTeNv2wYQdYwV6MAXpOozfAGB1SIH1uYKrgAAAABJRU5ErkJggg==",
@@ -4750,6 +4653,7 @@ ROTATION = 0x1800 // Mask for the direction bits
 		"main menu": () => {},
 		"options": () => {},
 		"play": () => {},
+        "chat": () => {},
 		"pause": () => {},
 		"creation menu": () => {},
 		"inventory": () => {},
@@ -4762,6 +4666,10 @@ ROTATION = 0x1800 // Mask for the direction bits
 		pause: {
 			enter: [window.message],
 			exit: [window.savebox, window.saveDirections, window.message]
+		},
+        chat: {
+			enter: [window.messageHolder],
+			exit: [window.messageHolder]
 		},
 		"loadsave menu": {
 			enter: [window.worlds, window.boxCenterTop, window.quota],
@@ -4829,9 +4737,13 @@ ROTATION = 0x1800 // Mask for the direction bits
       exit: [window.marketplace]
     },
     play: {
+      enter: [window.onscreenControl_Element],
+      exit: [window.onscreenControl_Element],
+      onexit: () => Messages.clear()
+    },
+    chat: {
       enter: [window.messageHolder, window.onscreenControl_Element],
       exit: [window.messageHolder, window.onscreenControl_Element],
-      onexit: () => Messages.clear()
     }
 	}
 
@@ -5189,7 +5101,7 @@ ROTATION = 0x1800 // Mask for the direction bits
       str = str.replace("/", '')
       let split = str.split(" ")
       let name = split[0]
-      if(name === "?"){
+      if(name === "help"){
         if(split[1]){
           var cmd = getCmd(split[1])
           if(cmd){
@@ -5203,7 +5115,7 @@ ROTATION = 0x1800 // Mask for the direction bits
         }else{
           if(cheats){
             var str = "List of commands:<br>"
-            str += "Use <span style='color:lime;'>/? command_name</span> to get information about a command<br>"
+            str += "Use <span style='color:lime;'>/help command_name</span> to get information about a command<br>"
             cmds.forEach(r => {
               str += "<span style='color:lightblue;'>/"+r.name+"</span> "
               if(r.args) str += r.args.join(" ")
@@ -5212,7 +5124,7 @@ ROTATION = 0x1800 // Mask for the direction bits
             Messages.add(str)
           }else{
             var str = "List of available commands:<br>"
-            str += "Use <span style='color:lime;'>/? command_name</span> to get information about a command<br>"
+            str += "Use <span style='color:lime;'>/help command_name</span> to get information about a command<br>"
             cmds.forEach(r => {
               if(!r.noCheats) return
               str += "<span style='color:lightblue;'>/"+r.name+"</span> "
@@ -5275,9 +5187,7 @@ ROTATION = 0x1800 // Mask for the direction bits
         }else{
           Messages.write(messageInput.value)
         }
-        messageInput.classList.add("hidden")
         messageInput.value = ""
-        canvas.focus()
       }
     },
     format(str){
@@ -5456,7 +5366,7 @@ ROTATION = 0x1800 // Mask for the direction bits
     if(touchScreen) return
 		if (canvas.requestPointerLock) {
 			canvas.requestPointerLock()
-		}
+		}    
 	}
 	function releasePointer() {
 		if (doc.exitPointerLock) {
@@ -6610,8 +6520,8 @@ ROTATION = 0x1800 // Mask for the direction bits
       verts: [
 				[], //bottom
 				[], //top
-				[objectify( 16, 16, 8, 16, 16, 0, 0)], //north
-				[objectify(  0, 16, 8, 16, 16, 0, 0)], //south
+				[objectify( 8, 8, 4, 8, 8, 0, 0)], //north
+				[objectify(  0, 8, 4, 8, 8, 0, 0)], //south
 				[], //east
 				[]  //west
 			],
@@ -7119,7 +7029,7 @@ ROTATION = 0x1800 // Mask for the direction bits
       }
       if(baseBlock.name === "grass"){
         crossBlock.shape = shapes.cube
-        crossBlock.textures = ["dirt","grassTop","snowGrass","snowGrass","snowGrass","snowGrass"]
+        crossBlock.textures = ["dirt","snowgrassTop","snowGrass","snowGrass","snowGrass","snowGrass"]
         crossBlock.solid = true
         crossBlock.transparent = false
         crossBlock.shadow = true
@@ -11954,12 +11864,6 @@ class Generator {
         }else this.updateShape()*/
         if(newInvItem(this.block)){
           this.canDespawn = true
-          if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog){
-            achievment("Getting Wood")
-          }
-          if(this.block === blockIds.diamond){
-            achievment("DIAMONDS!")
-          }
           updateHUD = true
           playSound("entity.item.pickup")
         }
@@ -13154,8 +13058,6 @@ class Generator {
         }
       }else if(data.type === "entityDelete"){
         world.deleteEntity(data.id, true)
-      }else if(data.type = "achievment"){
-        Messages.add(data.USER+" earned the achievment: "+data.data)
       }else if(data.type === "hit"){
         if(survival){
           damage(data.data || 1, data.username+" killed "+username)
@@ -13387,7 +13289,7 @@ class Generator {
               chunk.setBlock(i, gen - 3, k, blockIds.sand);
               if(gen<60) {
                     gen = 59;
-                    chunk.setBlock(i, gen+1, k, blockIds.Water | SLAB);
+                    chunk.setBlock(i, gen+1, k, blockIds.Water);
                     chunk.setBlock(i, gen, k, blockIds.Water);
                     chunk.setBlock(i, gen - 1, k, blockIds.Water);
                     chunk.setBlock(i, gen - 2, k, blockIds.gravel);
@@ -13410,7 +13312,7 @@ class Generator {
               chunk.setBlock(i, gen - 3, k, blockIds.dirt);
               if(gen<60) {
                 gen = 59;
-                chunk.setBlock(i, gen+1, k, blockIds.Water | SLAB);
+                chunk.setBlock(i, gen+1, k, blockIds.Water);
                 chunk.setBlock(i, gen, k, blockIds.Water);
                 chunk.setBlock(i, gen - 1, k, blockIds.Water);
                 chunk.setBlock(i, gen - 2, k, blockIds.gravel);
@@ -14510,68 +14412,47 @@ class Generator {
 
 			// Outline
 			ctx.beginPath()
-			
-			strokeWeight(6)
-      stroke(80)
+			if (hovering && !disabled) {
+				strokeWeight(7)
+				stroke(255)
+				cursor(HAND)
+			}
+			else {
+				strokeWeight(3)
+				stroke(0)
+			}
 			if (disabled) {
 				fill(60)
-				stroke(20)
-			} else {
-				if (hovering) {
-    				cursor(HAND)
-    				fill(100, 120, 200)
-    				stroke(100,80,160)
-    		}else{
-    		    fill(120)
-    		}
+			}
+			else {
+				fill(120)
 			}
 			ctx.rect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h)
-			
 			ctx.stroke()
 			ctx.fill()
-			
-			ctx.beginPath()
-			stroke(200)
-			if (hovering && !disabled)stroke(200, 200, 255);
-			if(disabled)stroke(130);
-			strokeWeight(3.5)
-			if(disabled){
-			    ctx.moveTo(this.x + (this.w / 2) + 2, this.y - this.h / 2-2)
-    			ctx.lineTo(this.x + (this.w / 2) + 2, this.y + (this.h / 2)+1)
-    			ctx.lineTo(this.x - this.w / 2 - 1, this.y + (this.h / 2)+1)
-			}else{
-    			ctx.moveTo(this.x - this.w / 2 - 2, this.y + (this.h / 2)-2)
-    			ctx.lineTo(this.x - this.w / 2 - 2, this.y - this.h / 2-2)
-    			ctx.lineTo(this.x + (this.w / 2)+1, this.y - this.h / 2-2)
-			}
-			ctx.stroke()
-
-            stroke(0)
-            strokeWeight(1)
-            ctx.strokeRect(this.x-this.w/2-4, this.y-this.h/2-4, this.w+8, this.h+8)
 
 			//Label
-			textSize(13)
+			fill(255)
+			textSize(16)
 			ctx.textAlign = 'center'
-			fill(0)
-			text(this.labels[this.index], this.x +2, this.y + this.h / 8 +2)
-			disabled ? fill(255) : (hovering ? fill(255,255,0) : fill(255) )
 			text(this.labels[this.index], this.x, this.y + this.h / 8)
-			
+
 			if (hovering && hoverText) {
 				hoverbox.innerText = hoverText
 				hoverbox.classList.remove("hidden")
 				if (mouseY < height / 2) {
 					hoverbox.style.bottom = ""
 					hoverbox.style.top = mouseY + 10 + "px"
-				} else {
+				}
+				else {
 					hoverbox.style.top = ""
 					hoverbox.style.bottom = height - mouseY + 10 + "px"
 				}
 				if (mouseX < width / 2) {
 					hoverbox.style.right = ""
 					hoverbox.style.left = mouseX + 10 + "px"
-				} else {
+				}
+				else {
 					hoverbox.style.left = ""
 					hoverbox.style.right = width - mouseX + 10 + "px"
 				}
@@ -15003,7 +14884,7 @@ class Generator {
     let s2 = s/2
 
     ctx2.fillStyle = "white"
-    ctx2.font = "14px VT323"
+    ctx2.font = "14px monospace"
     ctx2.textAlign = "right"
 		for(let i = 0; i < inventory.hotbar.length; i ++) {
       let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
@@ -15291,7 +15172,7 @@ class Generator {
 		}
 
 		if (inventory.holding && inventory.holding.id) {
-      ctx2.font = "14px VT323"
+      ctx2.font = "14px monospace"
       ctx2.textAlign = "right"
       ctx2.fillStyle = "white"
 			drawIcon(mouseX, mouseY, inventory.holding.id, inventory.holding)
@@ -15300,7 +15181,7 @@ class Generator {
     
     if(survival){
       ctx2.fillStyle = "white"
-      ctx2.font = "14px VT323"
+      ctx2.font = "14px monospace"
       ctx2.textAlign = "right"
       for (let i = 0; i < invLength; i++) {
         if(invItems[i] && invItems[i].id){
@@ -15353,7 +15234,7 @@ class Generator {
       ctx.stroke()
 
       //icons
-      ctx2.font = "14px VT323"
+      ctx2.font = "14px monospace"
       ctx2.textAlign = "right"
       ctx2.fillStyle = "white"
       for(y=0; y<2; y++){
@@ -15386,7 +15267,7 @@ class Generator {
       ctx.strokeRect(x,y, s,s)
       if(inventory.craftingRes && inventory.craftingRes.id){
         drawIcon(x+s2, y+s2, inventory.craftingRes.id, inventory.craftingRes)
-        ctx2.font = "14px VT323"
+        ctx2.font = "14px monospace"
         ctx2.textAlign = "right"
         ctx2.fillStyle = "white"
         ctx2.fillText(inventory.craftingRes.amount, x+s, y+s)
@@ -15398,7 +15279,7 @@ class Generator {
         let name = blockData[inventory.craftingRes.id].name
         if(name !== "" && over){
           ctx.textAlign = "left"
-          ctx.font = "16px VT323";
+          ctx.font = "16px monospace";
           var w = ctx.measureText(name).width;
           fill(0)
           ctx.fillRect(mouseX, mouseY, w+20, 20);
@@ -15443,7 +15324,7 @@ class Generator {
         name = blockData[idx] ? blockData[idx].name : "";
       }
       if((name !== "") && mouseY<s*9.5){
-        ctx.font = "16px VT323";
+        ctx.font = "16px monospace";
         var w = ctx.measureText(name).width;
         fill(0)
         ctx.fillRect(mouseX, mouseY, w+20, 20);
@@ -15598,9 +15479,6 @@ class Generator {
         }
       }
       var r = inventory.holding && inventory.holding.id
-      if(r === blockIds.craftingTable){
-        achievment("Benchmaking")
-      }
       let arr = inventory.crafting.map((v) => v?v.id:0)
       let recipe = inventory.craftingStr = arr.join(",")
       if(crafts[recipe]){
@@ -15750,7 +15628,7 @@ class Generator {
     ctx.stroke()
     
     //icons
-    ctx2.font = "14px VT323"
+    ctx2.font = "14px monospace"
     ctx2.textAlign = "right"
     ctx2.fillStyle = "white"
     for(y=0; y<3; y++){
@@ -15783,7 +15661,7 @@ class Generator {
     ctx.strokeRect(x,y, s,s)
     if(inventory.craftingRes && inventory.craftingRes.id){
       drawIcon(x+s2, y+s2, inventory.craftingRes.id, inventory.craftingRes)
-      ctx2.font = "14px VT323"
+      ctx2.font = "14px monospace"
       ctx2.textAlign = "right"
       ctx2.fillStyle = "white"
       ctx2.fillText(inventory.craftingRes.amount, x+s, y+s)
@@ -15795,7 +15673,7 @@ class Generator {
       let name = blockData[inventory.craftingRes.id].name
       if(name !== "" && over){
         ctx.textAlign = "left"
-        ctx.font = "16px VT323";
+        ctx.font = "16px monospace";
         var w = ctx.measureText(name).width;
         fill(0)
         ctx.fillRect(mouseX, mouseY, w+20, 20);
@@ -15828,20 +15706,6 @@ class Generator {
           block.amount --
           if(block.amount < 1)inventory.crafting[i].id = 0
         }
-      }
-      //achievments
-      var r = inventory.holding && inventory.holding.id
-      if(r && blockData[r].pickaxe){
-        achievment("Time to Mine!")
-      }
-      if(r === blockIds.stonePickaxe){
-        achievment("Getting an Upgrade")
-      }
-      if(r === blockIds.bread){
-        achievment("Bake Bread")
-      }
-      if(r && blockData[r].sword){
-        achievment("Time to Strike!")
       }
     }
     
@@ -15957,6 +15821,7 @@ class Generator {
 		} else {
 			doc.onmousemove = trackMouse
 			if (screen === "play" && !freezeFrame) {
+
 				changeScene("pause")
 				unpauseDelay = Date.now() + 1000
 			}
@@ -15986,6 +15851,7 @@ class Generator {
             break
           }
         }
+
 				if (index >= 0) {
 					inventory.hotbarSlot = index
 				} else {
@@ -15996,6 +15862,9 @@ class Generator {
 				Key.rightMouse = true
 				break
 		}
+        if (screen === "chat"){
+            changeScene("play")
+        }
 		if(screen === "play") {
 			if (doc.pointerLockElement !== canvas) {
 				getPointer()
@@ -16135,21 +16004,22 @@ class Generator {
 		}
 		Key[k] = true
 
-		if (k === "t") {
-			initTextures()
-		}
-
 		if (k === "enter") {
 			blockMode = blockMode === CUBE ? SLAB : (blockMode === SLAB ? STAIR : (blockMode === STAIR ? FENCE : (blockMode === FENCE ? WALLPOST : (blockMode === WALLPOST ? WALL : (blockMode === WALL ? WALLU : (blockMode === WALLU ? FENCQ : CUBE))))))
 			updateHUD = true
 		}
+
 
 		if (screen === "play") {
 			if(k === "p") {
 				releasePointer()
 				changeScene("pause")
 			}
-
+            if (k === "t" ||k === "/") {
+                releasePointer()
+                changeScene("chat")
+                Messages.showInput()
+            }
 			if(k === "b") {
 				p.autoBreak = !p.autoBreak
 				updateHUD = true
@@ -16197,17 +16067,12 @@ class Generator {
 			if (k === "e") {
 				changeScene("inventory")
 				releasePointer()
-        achievment("Taking Inventory")
 			}
 
 			if (k === ";") {
 				releasePointer()
 				freezeFrame = true
 			}
-      
-      if(k === "/"){
-        Messages.showInput()
-      }
 
 			if (Key.backspace && inventory.hotbar[inventory.hotbarSlot] && inventory.hotbar[inventory.hotbarSlot].id) {
 				let d = p.direction
@@ -16229,7 +16094,8 @@ class Generator {
 			if(k === "p") {
 				play()
 			}
-		} else if (screen === "inventory" || screen === "crafting") {
+		}
+        else if (screen === "inventory" || screen === "crafting") {
 			if (k === "e") {
         if(screen === "crafting" || screen === "inventory"){
           for(var i=0; i<9; i++){
@@ -16250,8 +16116,9 @@ class Generator {
 	canvas.onkeyup = function(e) {
 		let k = e.key.toLowerCase()
 		Key[k] = false
-		if(k === "escape" && (screen === "pause" || screen === "inventory" || screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
+		if(k === "escape" && (screen === "pause" ||screen === "chat"|| screen === "inventory" ||screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
 			play()
+            
 		}
 		if (screen === "play") {
 			if (k === "z") {
@@ -16951,7 +16818,7 @@ class Generator {
 			}
 			let br = "<br>"
 			div.id = id
-      div.innerHTML = "<img class='thumbnail'"+(thumbnail ? (" src='" + thumbnail + "'") : "")+"><div class='thumbnailHover'></div>"
+      		div.innerHTML = "<img class='thumbnail'"+(thumbnail ? (" src='" + thumbnail + "'") : "")+"><div class='thumbnailHover'></div>"
 			div.innerHTML += "<strong>" + Messages.format(name) + "</strong>" + br
 			
 			if (edited){
@@ -17737,7 +17604,6 @@ class Generator {
         surviv = data.surviv
         nether = data.nether
         ent = data.ent
-        if(data.achievments) achievments = data.achievments
         try{
           world.mod = data.mod
           mod = Object.constructor("return "+data.mod)()
@@ -17802,8 +17668,6 @@ class Generator {
       username = r || "Steve"
       p.character.changeBlock(abs(r.hashCode()) % 80 + 1)
     })
-
-		message.innerHTML = ".>a/<etisbew ym>'oc.lper.rekamgniht.www//:sptth'=ferh a< tuo kcehc oslA>rb<>a/<etisbew s'draliW no nahKeniM ot kniL>'nahkenim/nuf.dralliw//:sptth'=ferh a<>rb<.>a<etisbew s'dralliW>'nuf.dralliw//:sptth'=ferh a< tuo kcehc ot>rb<erus eb ,siht ekil uoy fI>rb<.dralliW yb >a/<nahKeniM>\"wen_\"=tegrat \"8676731005517465/cm/sc/gro.ymedacanahk.www//:sptth\"=ferh a< fo>rb<ffo-nips a si margorp sihT".split("").reverse().join("")
     
     crack.entity = new crackEntity("crack1",0,0,0)
     for(var i=0; i<crack.length; i++){crack.entity.cacheTexture(crack[i])}
@@ -17844,7 +17708,6 @@ class Generator {
       "Chat with a slash!",
       "Watch out from\nthe falling sand!",
       "Hard Parkour!",
-      "MineKhan is on youtube!",
       "Original by Willard.",
       "Log => 4 planks\n2 Planks => 4 sticks\n1 stick + 1 coal\n=\ntorch",
       "Annoying cactus!",
@@ -17906,31 +17769,27 @@ class Generator {
     rdmSplash()
     setInterval(() => rdmSplash(), 60000)
 		function drawTitle() {
-			let title = "MINEKHAN"
-      let titleWidth = images.minekhan.width*1.6
-      let titleHeight = images.minekhan.height*1.6
+			let title = "WEBGLCRAFT"
 			let subtext = "JAVASCRIPT EDITION"
-			let font = "VT323,monospace"
+			let font = "monospace,monospace"
 			strokeWeight(1)
 			ctx.textAlign = 'center'
 
-			/*
-      ctx.font = "bold 110px " + font
-			fill(/*30*-/70)
+			ctx.font = "bold 120px " + font
+			fill(30)
 			text(title, width / 2, 158)
-			//fill(40)
+			fill(40)
 			text(title, width / 2, 155)
-			ctx.font = "bold 111px " + font
-			//fill(50)
+			ctx.font = "bold 121px " + font
+			fill(50)
 			text(title, width / 2, 152)
-			//fill(70)
+			fill(70)
 			text(title, width / 2, 150)
-			//fill(90)
-			ctx.font = "bold 112px " + font
+			fill(90)
+			ctx.font = "bold 122px " + font
 			text(title, width / 2, 148)
 			fill(110)
-			text(title, width / 2, 145)*/
-      ctx.drawImage(images.minekhan, width/2 - (titleWidth/2), 145 - titleHeight, titleWidth,titleHeight)
+			text(title, width / 2, 145)
 
 			ctx.font = "bold 32px " + font
 			fill(50)
@@ -17967,9 +17826,9 @@ class Generator {
       size += sizes
 			drawTitle()
 			fill(220)
-			ctx.font = "18px VT323"
+			ctx.font = "18px monospace"
 			ctx.textAlign = 'left'
-			text("MineKhan " + version, 2, height - 2)
+			text("Minecraft " + version, 2, height - 2)
       ctx.textAlign = "right"
       text("Do not plagarize.", width - 2, height - 2)
 		}
@@ -18276,13 +18135,13 @@ class Generator {
       if(titleOpacity > 0){
         titleOpacity --
         let alpha = titleOpacity/100
-        ctx.font = "80px VT323"
+        ctx.font = "80px monospace"
         ctx.textAlign = "center"
         ctx.fillStyle = titleColor
         ctx.globalAlpha = alpha > 1 ? 1 : alpha
         text(title, width/2, height/2, 80)
         if(subtitle){
-          ctx.font = "40px VT323"
+          ctx.font = "40px monospace"
           text(subtitle, width/2, height/2+50, 40)
         }
         ctx.globalAlpha = 1
@@ -18305,7 +18164,7 @@ class Generator {
         ctx.fillRect(x, 0,w,50)
         ctx.textBaseline = "top"
         ctx.fillStyle = "white"
-        ctx.font = "10px VT323"
+        ctx.font = "10px monospace"
         ctx.fillText(sideMessageTitle, x+5, 5, w-10)
         ctx.fillStyle = "#aaa"
         ctx.fillText(sideMessageContent, x+5, 20, w-10)
