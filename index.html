@@ -12816,7 +12816,7 @@ class Generator {
       var h = height / 2
       var x = w - (w/2)
       var y = h - (h/2)
-      var w = open("https://www.thingmaker.repl.co/website/login.html", "login","resizable=no,width="+w+",height="+h+",top="+y+",left="+x)
+      var w = open("https://www.guineapigbridge.repl.co/website/login.html", "login","resizable=no,width="+w+",height="+h+",top="+y+",left="+x)
       function onmsg(event){
         if (event.source !== w) return;
         if (event.data.startsWith("logged:")){
@@ -12837,12 +12837,12 @@ class Generator {
   win.username = ""
   async function loggedIn(){
     var logged = false;
-    await fetch("https://server.thingmaker.repl.co/getuser", {credentials:"include"}).then(r => r.text()).then(r => logged=r)
+    await fetch("https://server.guineapigbridge.repl.co/getuser", {credentials:"include"}).then(r => r.text()).then(r => logged=r)
     if(logged){
       username = logged
       return logged
     }else{
-      if(confirm("Your not logged in. Head over to www.thingmaker.repl.co/login.html to login.\n\nPress OK to login,")){
+      if(confirm("Your not logged in. Head over to https://www.guineapigbridge.repl.co/website/login.html to login.\n\nPress OK to login,")){
         var logged
         await login().then(r => logged=r).catch(r => logged=r)
         if(logged){
@@ -12861,9 +12861,9 @@ class Generator {
       return "notLoggedIn"
     }
     var worlds
-    await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => worlds=r)
+    await fetch("https://server.guineapigbridge.repl.co/worlds").then(r => r.json()).then(r => worlds=r)
     if(pingCallback){
-      fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pingCallback)
+      fetch("https://server.guineapigbridge.repl.co/worldsPing").then(r => r.json()).then(pingCallback)
     }
     return worlds
   }
@@ -18593,7 +18593,7 @@ function blockParticles(block,x,y,z,amount){
   for(var i=0; i<amount; i++) world.particles.push(new BlockParticle(blockData[block].textures[2], x,y,z))
 }
 
-if (("serviceWorker" in navigator) && location.origin === "https://minekhan.thingmaker.repl.co") {
+if (("serviceWorker" in navigator) && location.origin === "https://low-fat-lard.github.io/webgl-experiment/") {
   window.addEventListener("load", function() {
     navigator.serviceWorker
       .register("/sw.js")
