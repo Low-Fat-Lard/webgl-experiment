@@ -16952,7 +16952,7 @@ class Generator {
 	}
   let marketplace = {}; win.marketplaceData = null
   async function initMarketplace(){
-    marketplaceData = await fetch("https://Minekhan.thingmaker.repl.co/maps.json")
+    marketplaceData = await fetch("")
     await new Promise((resolve, reject) => {
       marketplaceData.text().then(r => {marketplaceData = JSON.parse(r); resolve()})
     })
