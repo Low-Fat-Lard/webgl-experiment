@@ -12912,7 +12912,7 @@ class Generator {
       host = true
     }
     players = {} //empty
-    multiplayer = new WebSocket("wss://server.thingmaker.repl.co/ws?target="+target)
+    multiplayer = new WebSocket("wss://server.guineapigbridge.repl.co/ws?target="+target)
     multiplayer.onopen = e => {
 			/*multiplayer.send(JSON.stringify({
         "auth": achexUsername,
@@ -17664,7 +17664,7 @@ class Generator {
 		initWebgl()
     constVersion(version)
     initPlayer()
-    fetch("https://server.thingmaker.repl.co/getuser",{credentials:'include'}).then(r => r.text()).then(r => {
+    fetch("https://server.guineapigbridge.repl.co/getuser",{credentials:'include'}).then(r => r.text()).then(r => {
       username = r || "Steve"
       p.character.changeBlock(abs(r.hashCode()) % 80 + 1)
     })
@@ -17702,7 +17702,7 @@ class Generator {
       "Multiplayer!",
       "Survival!",
       "Flowers? Make a garden!",
-      "Also go to my website:\nwww.thingmaker.repl.co",
+      "Also go to my website:\nwww.guineapigbridge.repl.co",
       "Nether!",
       "Can't break bedrock.",
       "Chat with a slash!",
@@ -17729,7 +17729,6 @@ class Generator {
       "No tnt!!!",
       "Don't mess\naround with\nuranium!!!",
       "Why does my\nhouse have a\nhole in the\nroof???",
-      "www.thingmaker.repl.co",
       "§1C§2o§3l§4o§5r§6m§7a§8t§9i§ac",
       "Using WebGL!",
       "Who has awesome hair?",
@@ -17737,17 +17736,6 @@ class Generator {
       "Really really fun!",
       "Not kidding",
       "Punch diamonds!",
-      "Very long useless text,\nglorbouirewsoytuderkoilsykrojeticfilistikmensuiklit",
-      "Play for 10 hours!",
-      "Also try VVVVVV!",
-      "Also try Super Meat Boy!",
-      "Also try Terraria!",
-      "Also try Mount And Blade!",
-      "Also try Project Zomboid!",
-      "Also try World of Goo!",
-      "Also try Limbo!",
-      "Also try Pixeljunk Shooter!",
-      "Also try Braid!",
       "Why are you reading this???",
       "Really. You read\n splash text.",
       "Umm... Why are\nthe trees floating?",
@@ -18604,3 +18592,1848 @@ if (("serviceWorker" in navigator) && location.origin === "https://low-fat-lard.
     </script>
 	</body>
 </html>
+--;
+                }
+                I++;
+            }
+            while (this.X < this.size && win.performance.now() < end && !doingLake) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    if (this.vertex[x+y*this.size] === -1) {
+                        if (this.grid[x+y*this.size] === 2) {
+                            this.vertex[x+y*this.size] = this.h;
+                            this.changes++;
+                        }   else if (this.h > 0) {
+                            var n = this.GetNeighbors(x, y);
+                            var l = this.size;
+                            var ld;
+                            for (var i in n) {
+                                var v = this.vertex[n[i].x + n[i].y*this.size];
+                                if (v < l && v !== -1) {
+                                    l = v;
+                                    ld = n[i];
+                                }
+                            }
+                            if (l !== this.size && l <= this.h) {
+                                if (this.grid[x+y*this.size] === 0) {
+                                    this.updates.push({type:"river",x:ld.x,y:ld.y});
+                                    this.updates.push({type:"lake",x:x,y:y,a:l});
+                                }   else {
+                                    this.vertex[x+y*this.size] = l+1+(random() > 0.5 ? 1 : 0);
+                                }
+                                this.changes++;
+                            }
+                        }
+                    }
+                }
+                this.X++;
+            }
+            if (this.X === this.size && this.h < this.size/3) {
+                if (this.changes === 0) {
+                    this.h++;
+                }
+                this.X = 0;
+                this.changes = 0;
+            }
+        }   else if (this.stage === 3) {    //altitude readjustment
+            
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    this.vertex[x+y*this.size] = (Math.pow(20, this.vertex[x+y*this.size]/this.size*3)-1)/(20-1)*this.size/3;
+                    if (this.vertex[x+y*this.size] > this.vertex[this.highestPoint[0]+this.highestPoint[1]*this.size]) {
+                        this.highestPoint[0] = x;
+                        this.highestPoint[1] = y;
+                    }
+                }
+                this.X++;
+            }
+            
+        }   else if (this.stage === 4) {    //rivers
+            if (this.rivers === 0) {
+                var x, y;
+                for (var i = 0; i < 200 && this.rivers < 100; i++) {
+                    x = Math.floor(random(this.size));
+                    y = Math.floor(random(this.size));
+                    if (this.grid[x+y*this.size] === 1) {
+                        this.updates.push({type:"river",x:x,y:y});
+                        this.rivers++;
+                    }
+                }
+            }   else {
+                if (this.updates.length === 0) {
+                    this.X = this.size;
+                }
+            }
+            while(this.updates.length > 0 && win.performance.now() < end) {
+                var u = this.updates[0];
+                if (this.grid[u.x+u.y*this.size] === 1) {
+                    this.river[u.x+u.y*this.size]++;
+                    var d = this.GetDown(u.x, u.y);
+                    if (d === undefined) {
+                        this.updates.shift();
+                    }   else {
+                        this.updates[0].x = d.x; this.updates[0].y = d.y;
+                    }
+                }   else {
+                    this.updates.shift();
+                }
+            }
+        }   else if (this.stage === 5) {    //precipitation
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    if (this.precip[x + y*this.size] === -1) {
+                        if (this.h === -1) {
+                            if (this.grid[x + y*this.size] === 2) {
+                                this.precip[x + y*this.size] = 5;
+                                this.changes++;
+                            }
+                        }   else {
+                            if (this.h <= 8) {
+                                if (this.grid[x + y*this.size] === 0 || this.river[x+y*this.size] > 0) {
+                                    this.precip[x + y*this.size] = 8;
+                                    this.changes++;
+                                }
+                            }
+                            var n = this.GetNeighbors(x, y);
+                            var h = -1;
+                            for (var i in n) {
+                                if (this.precip[n[i].x + n[i].y*this.size] > h) {
+                                    h = this.precip[n[i].x + n[i].y*this.size];
+                                }
+                            }
+                            if (h > -1 && h >= this.h) {
+                                this.precip[x+y*this.size] = Math.max(h - (random() < 0.5 ? 0.66 : 0.33), 0);
+                                this.changes++;
+                            }
+                        }
+                    }
+                }
+                this.X++;
+            }
+            if (this.X === this.size) {
+                this.X = 0;
+                if (this.h === -1) {
+                    this.h = 10;
+                }   else {
+                    if (this.changes === 0) {
+                        this.h--;
+                    }
+                    this.changes = 0;
+                    if (this.h < 0) {
+                        this.X = this.size;
+                    }
+                }
+            }
+        }   else if (this.stage === 6) {    //readjust precipitation
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    this.precip[x+y*this.size] = Math.floor(this.precip[x+y*this.size]/10*6);
+                }
+                this.X++;
+            }
+        }   else if (this.stage === 7) {    //temperature
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                }
+                this.X++;
+            }
+        }   else if (this.stage === 8) {    //biomes
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    var c;
+                    var h = Math.floor(this.vertex[x+y*this.size]/this.size*6*5);
+                    switch (this.grid[x+y*this.size]) {
+                        case 0: if (h > 2) {
+                                c = color(157, 194, 201);
+                            }   else {
+                                c = color(25, 153, 227);
+                            }   break;
+                        case 1: if (this.river[x+y*this.size] > 0) {
+                                    if (h > 2) {
+                                    c = color(157, 194, 201);
+                                }   else {
+                                    c = color(25, 153, 227);
+                                }
+                            }   else {
+                                switch (h) {
+                                    case 0: switch (this.precip[x+y*this.size]) {
+                                        case 5: case 4: c = color(10, 133, 72); break;
+                                        case 3: case 2: c = color(10, 133, 23); break;
+                                        case 1: c = color(179, 232, 35); break;
+                                        case 0: c = color(209, 166, 58); break;
+                                    } break;
+                                    case 1: switch (this.precip[x+y*this.size]) {
+                                        case 5: c = color(14, 156, 85); break;
+                                        case 4: case 3: c = color(72, 133, 10); break;
+                                        case 2: case 1: c = color(179, 232, 35); break;
+                                        case 0: c = color(207, 195, 58); break;
+                                    } break;
+                                    case 2: switch (this.precip[x+y*this.size]) {
+                                        case 5: case 4: c = color(121, 191, 95); break;
+                                        case 3: case 2: c = color(155, 161, 135); break;
+                                        case 1: case 0: c = color(207, 195, 58); break;
+                                    } break;
+                                    case 3: case 4: switch (this.precip[x+y*this.size]) {
+                                        case 5: case 4: case 3: c = color(255); break;
+                                        case 2: c = color(149, 189, 94); break;
+                                        case 1: c = color(180); break;
+                                        case 0: c = color(128);
+                                    } break;
+                                }
+                            }
+                            break;
+                        case 2: c = color(4, 137, 209); break;
+                    }
+                    this.biome[x+y*this.size] = c;
+                }
+                this.X++;
+            }
+        }   else if (this.stage === 9) {    //add lava
+            let ph = this.vertex[this.highestPoint[0] + this.highestPoint[1]*this.size]-5;
+            while (this.X < this.size && win.performance.now() < end) {
+                var x = this.X;
+                for (var y = 0; y < this.size; y++) {
+                    if (this.vertex[x + y*this.size] > ph) {
+                        this.vertex[x + y*this.size] = ph-2;
+                        this.biome[x + y*this.size] = -65536;
+                    }
+                }
+                this.X++;
+            }
+        }
+        if (this.X === this.size) {
+            console.log(this.stage)
+            this.X = 0;
+            this.h = -1;
+            this.stage++;
+        }
+    }
+}
+
+	class Section {
+		constructor(x, y, z, size, chunk) {
+			this.x = x
+			this.y = y
+			this.z = z
+			this.size = size
+			this.arraySize = size * size * size
+			this.blocks = new Int32Array(this.arraySize)
+			this.light = new Uint8Array(this.arraySize)
+			this.renderData = []
+			this.renderLength = 0
+			this.faces = 0
+			this.hasVisibleBlocks = false
+			this.chunk = chunk
+			this.edited = false
+			this.caves = !caves
+			this.pallete = [0]
+			this.palleteMap = {"0": 0}
+			this.palleteSize = 0
+		}
+		getBlock(x, y, z) {
+			let s = this.size
+			return this.blocks[x * s * s + y * s + z]
+		}
+		setBlock(x, y, z, blockId) {
+			let s = this.size
+			this.blocks[x * s * s + y * s + z] = blockId
+		}
+		deleteBlock(x, y, z) {
+			let s = this.size
+			this.blocks[x * s * s + y * s + z] = 0
+		}
+		optimize() {
+			let visible = false
+			let pos = 0
+			let xx = this.x
+			let yy = this.y
+			let zz = this.z
+			let blockState = 0
+			let palleteIndex = 0
+			let index = 0
+			let s = this.size
+			let blocks = this.blocks
+			this.hasVisibleBlocks = false
+			this.renderLength = 0
+			let localBlocks = world.getAdjacentSubchunks(xx, yy, zz)
+
+			//Check all the blocks in the subchunk to see if they're visible.
+			for (let i = 0; i < s; i++) {
+				for (let j = 0; j < s; j++) {
+					for (let k = 0; k < s; k++, index++) {
+						blockState = blocks[index]
+
+						if (this.palleteMap[blockState] === undefined) {
+							this.palleteMap[blockState] = this.pallete.length
+							palleteIndex = this.pallete.length
+							this.pallete.push(blockState)
+						} else {
+							palleteIndex = this.palleteMap[blockState]
+						}
+
+						visible = blockState && (hideFace(i-1, j, k, localBlocks, blockState, getBlock, "west", "east")
+						| hideFace(i+1, j, k, localBlocks, blockState, getBlock, "east", "west",this) << 1
+						| hideFace(i, j-1, k, localBlocks, blockState, getBlock, "bottom", "top",this) << 2
+						| hideFace(i, j+1, k, localBlocks, blockState, getBlock, "top", "bottom",this) << 3
+						| hideFace(i, j, k-1, localBlocks, blockState, getBlock, "south", "north",this) << 4
+						| hideFace(i, j, k+1, localBlocks, blockState, getBlock, "north", "south",this) << 5)
+						if (visible) {
+							pos = (i | j << 4 | k << 8) << 19
+							this.renderData[this.renderLength++] = 1 << 31 | pos | visible << 13 | palleteIndex
+							this.hasVisibleBlocks = true
+						}
+					}
+				}
+			}
+		}
+		updateBlock(x, y, z, world, leaveMe) {
+			if (!world.meshQueue.includes(this.chunk)) {
+				world.meshQueue.push(this.chunk)
+			}
+			let i = x
+			let j = y
+			let k = z
+			let s = this.size
+			x += this.x
+			y += this.y
+			z += this.z
+			let blockState = this.blocks[i * s * s + j * s + k]
+			let visible = blockState && (hideFace(x-1, y, z, 0, blockState, world.getBlock, "west", "east")
+			| hideFace(x+1, y, z, 0, blockState, world.getBlock, "east", "west") << 1
+			| hideFace(x, y-1, z, 0, blockState, world.getBlock, "bottom", "top") << 2
+			| hideFace(x, y+1, z, 0, blockState, world.getBlock, "top", "bottom") << 3
+			| hideFace(x, y, z-1, 0, blockState, world.getBlock, "south", "north") << 4
+			| hideFace(x, y, z+1, 0, blockState, world.getBlock, "north", "south") << 5)
+			let pos = (i | j << 4 | k << 8) << 19
+			let index = -1
+
+			// Find index of current block in this.renderData
+			for (let i = 0; i < this.renderLength; i++) {
+				if ((this.renderData[i] & 0x7ff80000) === pos) {
+					index = i
+					break
+				}
+			}
+
+			// Update pallete
+			if (this.palleteMap[blockState] === undefined) {
+				this.palleteMap[blockState] = this.pallete.length
+				this.pallete.push(blockState)
+			}
+
+			if (index < 0 && !visible) {
+				// Wasn't visible before, isn't visible after.
+				return
+			}
+			if (!visible) {
+				// Was visible before, isn't visible after.
+				this.renderData.splice(index, 1)
+				this.renderLength--
+				this.hasVisibleBlocks = !!this.renderLength
+				return
+			}
+			if (visible && index < 0) {
+				// Wasn't visible before, is visible after.
+				index = this.renderLength++
+				this.hasVisibleBlocks = true
+			}
+			this.renderData[index] = 1 << 31 | pos | visible << 13 | this.palleteMap[blockState]
+      
+      var block = world.getBlock(x,y,z)
+      if(!leaveMe && blockData[block]) blockData[block].onupdate(x,y,z,block);
+		}
+		genMesh(barray, index) {
+			if (!this.renderLength) {
+				return index
+			}
+			let length = this.renderLength
+			let rData = this.renderData
+			let x = 0, y = 0, z = 0, loc = 0, data = 0,
+				sides = 0, tex = null, x2 = 0, y2 = 0, z2 = 0,
+				verts = null, texVerts = null, texShapeVerts = null,
+				tx = 0, ty = 0
+			let wx = this.x, wy = this.y, wz = this.z
+			let blocks = world.getAdjacentSubchunks(wx, wy, wz)
+			let lightChunks = world.getAdjacentSubchunks(wx, wy, wz, true)
+			let block = null
+
+			let shadows = null, slights = [0, 0, 0, 0], blights = [0, 0, 0, 0]
+			let blockSides = Object.keys(Block)
+			let side = ""
+			let shapeVerts = null
+			let shapeTexVerts = null
+			let pallete = this.pallete
+			// let intShad = interpolateShadows
+			
+			for (let i = 0; i < length; i++) {
+				data = rData[i]
+				block = blockData[pallete[data & 0x1fff]]
+				tex = block.textures
+				sides = data >> 13 & 0x3f
+				loc = data >> 19 & 0xfff
+				x = loc & 15
+				y = loc >> 4 & 15
+				z = loc >> 8 & 15
+
+				x2 = x + this.x
+				y2 = y + this.y
+				z2 = z + this.z
+
+				shapeVerts = block.shape.verts
+				shapeTexVerts = block.shape.texVerts
+
+				let texNum = 0
+				for (let n = 0; n < 6; n++) {
+					side = blockSides[n]
+					if (sides & Block[side]) {
+						shadows = getShadows[side](x, y, z, blocks)
+						slights = getLight[side](x, y, z, lightChunks, slights, 0)
+						blights = getLight[side](x, y, z, lightChunks, blights, 1) //top is actually bottom
+						let directionalFaces = shapeVerts[Sides[side]]
+						for (let facei = 0; facei < directionalFaces.length; facei++) {
+							verts = directionalFaces[facei]
+							texVerts = textureCoords[textureMap[tex[texNum]]]
+							tx = texVerts[0]
+							ty = texVerts[1]
+							texShapeVerts = shapeTexVerts[n][facei]
+
+							barray[index] = verts[0] + x2
+							barray[index+1] = verts[1] + y2
+							barray[index+2] = verts[2] + z2
+							barray[index+3] = tx + texShapeVerts[0]
+							barray[index+4] = ty + texShapeVerts[1]
+							barray[index+5] = shadows[0]
+							barray[index+6] = slights[0]
+							barray[index+7] = blights[0]
+
+							barray[index+8] = verts[3] + x2
+							barray[index+9] = verts[4] + y2
+							barray[index+10] = verts[5] + z2
+							barray[index+11] = tx + texShapeVerts[2]
+							barray[index+12] = ty + texShapeVerts[3]
+							barray[index+13] = shadows[1]
+							barray[index+14] = slights[1]
+							barray[index+15] = blights[1]
+
+							barray[index+16] = verts[6] + x2
+							barray[index+17] = verts[7] + y2
+							barray[index+18] = verts[8] + z2
+							barray[index+19] = tx + texShapeVerts[4]
+							barray[index+20] = ty + texShapeVerts[5]
+							barray[index+21] = shadows[2]
+							barray[index+22] = slights[2]
+							barray[index+23] = blights[2]
+
+							barray[index+24] = verts[9] + x2
+							barray[index+25] = verts[10] + y2
+							barray[index+26] = verts[11] + z2
+							barray[index+27] = tx + texShapeVerts[6]
+							barray[index+28] = ty + texShapeVerts[7]
+							barray[index+29] = shadows[3]
+							barray[index+30] = slights[3]
+							barray[index+31] = blights[3]
+							index += 32
+						}
+					}
+					texNum++
+				}
+			}
+			return index
+		}
+		carveCaves() {
+			let wx = this.x + 16, wz = this.z + 16, wy = this.y + 16
+			for (let x = this.x, xx = 0; x < wx; x++, xx++) {
+				for (let z = this.z, zz = 0; z < wz; z++, zz++) {
+					wy = this.chunk.tops[zz * 16 + xx]
+					for (let y = this.y; y < wy; y++) {
+						if (isCave(x, y, z)) {
+							carveSphere(x, y, z)
+						}
+					}
+				}
+			}
+			this.caves = true
+		}
+		tick() {
+			for (let i = 0; i < 3; i++) {
+				let rnd = Math.random() * this.blocks.length | 0
+				if ((this.blocks[rnd]) === blockIds.grass) {
+					// Spread grass
+
+					let x = (rnd >> 8) + this.x
+					let y = (rnd >> 4 & 15) + this.y
+					let z = (rnd & 15) + this.z
+					if (!blockData[world.getBlock(x, y + 1, z)].transparent) {
+						world.setBlock(x, y, z, blockIds.dirt, false)
+						return
+					}
+
+					let rnd2 = Math.random() * 27 | 0
+					let x2 = rnd2 % 3 - 1
+					rnd2 = (rnd2 - x2 - 1) / 3
+					let y2 = rnd2 % 3 - 1
+					rnd2 = (rnd2 - y2 - 1) / 3
+					z += rnd2 - 1
+					x += x2
+					y += y2
+
+					if (world.getBlock(x, y, z) === blockIds.dirt && world.getBlock(x, y + 1, z) === blockIds.air) {
+						world.setBlock(x, y, z, blockIds.grass, false)
+					}
+				} else if (this.blocks[rnd] === (blockIds.oakSapling | CROSS)){
+          let i = (rnd >> 8) + this.x;      let wx = i
+					let j = (rnd >> 4 & 15) + this.y; let wy = j
+					let k = (rnd & 15) + this.z;      let wz = k
+          var ground = j//this.chunk.tops[i * 16 + k]
+          var top = ground + floor(4.5 + (Math.random()*2.5) )
+          var rand = floor(Math.random()*4096)
+          let tree = blockIds.oakLog
+          let leaf = blockIds.leaves
+          let groundBlock = blockIds.dirt
+
+          //Center
+          for (let j = ground + 1; j <= top; j++) {
+            world.setBlock(i, j, k, tree)
+          }
+          world.setBlock(i, top + 1, k, leaf)
+          world.setBlock(i, ground, k, groundBlock)
+
+          //Bottom leaves
+          for (let x = -2; x <= 2; x++) {
+            for (let z = -2; z <= 2; z++) {
+              if (x || z) {
+                if ((x * z & 7) === 4) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top - 2, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top - 2, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //2nd layer leaves
+          for (let x = -2; x <= 2; x++) {
+            for (let z = -2; z <= 2; z++) {
+              if (x || z) {
+                if ((x * z & 7) === 4) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top - 1, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top - 1, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //3rd layer leaves
+          for (let x = -1; x <= 1; x++) {
+            for (let z = -1; z <= 1; z++) {
+              if (x || z) {
+                if (x & z) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //Top leaves
+          world.setBlock(wx + 1, top + 1, wz, leaf)
+          world.setBlock(wx, top + 1, wz - 1, leaf)
+          world.setBlock(wx, top + 1, wz + 1, leaf)
+          world.setBlock(wx - 1, top + 1, wz, leaf)
+        }else if (this.blocks[rnd] === (blockIds.birchSapling | CROSS)){
+          let i = (rnd >> 8) + this.x;      let wx = i
+					let j = (rnd >> 4 & 15) + this.y; let wy = j
+					let k = (rnd & 15) + this.z;      let wz = k
+          var ground = j//this.chunk.tops[i * 16 + k]
+          var top = ground + floor(4.5 + (Math.random()*2.5) )
+          var rand = floor(Math.random()*4096)
+          let tree = blockIds.birchLog
+          let leaf = blockIds.leaves
+          let groundBlock = blockIds.dirt
+
+          //Center
+          for (let j = ground + 1; j <= top; j++) {
+            world.setBlock(i, j, k, tree)
+          }
+          world.setBlock(i, top + 1, k, leaf)
+          world.setBlock(i, ground, k, groundBlock)
+
+          //Bottom leaves
+          for (let x = -2; x <= 2; x++) {
+            for (let z = -2; z <= 2; z++) {
+              if (x || z) {
+                if ((x * z & 7) === 4) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top - 2, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top - 2, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //2nd layer leaves
+          for (let x = -2; x <= 2; x++) {
+            for (let z = -2; z <= 2; z++) {
+              if (x || z) {
+                if ((x * z & 7) === 4) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top - 1, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top - 1, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //3rd layer leaves
+          for (let x = -1; x <= 1; x++) {
+            for (let z = -1; z <= 1; z++) {
+              if (x || z) {
+                if (x & z) {
+                  place = rand & 1
+                  rand >>>= 1
+                  if (place) {
+                    world.setBlock(wx + x, top, wz + z, leaf)
+                  }
+                } else {
+                  world.setBlock(wx + x, top, wz + z, leaf)
+                }
+              }
+            }
+          }
+
+          //Top leaves
+          world.setBlock(wx + 1, top + 1, wz, leaf)
+          world.setBlock(wx, top + 1, wz - 1, leaf)
+          world.setBlock(wx, top + 1, wz + 1, leaf)
+          world.setBlock(wx - 1, top + 1, wz, leaf)
+        }
+			}
+		}
+		getLight(x, y, z, block = 0) {
+			let s = this.size
+			let i = x * s * s + y * s + z
+			return (this.light[i] & 15 << (block * 4)) >> (block * 4)
+		}
+		setLight(x, y, z, level, block = 0) {
+			let s = this.size
+			let i = x * s * s + y * s + z
+			this.light[i] = level << (block * 4) | (this.light[i] & 15 << (!block * 4))
+		}
+	}
+	let emptySection = new Section(0, 0, 0, 16)
+	let fullSection = new Section(0, 0, 0, 16)
+	fullSection.blocks.fill(blockIds.bedrock)
+	emptySection.light.fill(15)
+
+	class Chunk {
+		constructor(x, z, type) {
+			this.x = x
+			this.z = z
+			this.maxY = 0
+			this.minY = 255
+			this.sections = []
+			this.cleanSections = []
+			this.tops = new Uint8Array(16 * 16) // Store the heighest block at every (x,z) coordinate
+      this.ceils = new Uint8Array(16 * 16) //for nether
+			this.optimized = false
+			this.generated = false; // Terrain
+			this.populated = superflat === true // Trees and ores
+			this.lit = false
+			this.lazy = false
+			this.edited = false
+			this.loaded = false
+      this.type = type || world.type
+			// vao for this chunk
+			this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
+			this.caves = !caves
+		}
+		getBlock(x, y, z) {
+			let s = y >> 4
+			return this.sections.length > s ? this.sections[s].getBlock(x, y & 15, z) : 0
+		}
+		setBlock(x, y, z, blockID, user) {
+			if (!this.sections[y >> 4]) {
+				do {
+					this.sections.push(new Section(this.x, this.sections.length * 16, this.z, 16, this))
+				} while (!this.sections[y >> 4])
+			}
+			if (user && !this.sections[y >> 4].edited) {
+				this.cleanSections[y >> 4] = this.sections[y >> 4].blocks.slice()
+				this.sections[y >> 4].edited = true
+				this.edited = true
+			}
+			this.sections[y >> 4].setBlock(x, y & 15, z, blockID)
+		}
+		fillLight() {
+			let max = this.sections.length * 16 - 1
+			let blockSpread = []
+
+			// Set virtical columns of light to level 15
+			for (let x = 0; x < 16; x++) {
+				for (let z = 0; z < 16; z++) {
+					let stop = false
+					for (let y = max; y >= 0; y--) {
+						let data = blockData[this.getBlock(x, y, z)]
+						if (data.lightLevel) {
+							if (!blockSpread[data.lightLevel]) blockSpread[data.lightLevel] = []
+							blockSpread[data.lightLevel].push(x + this.x, y, z + this.z)
+							this.setLight(x, y, z, data.lightLevel, 1)
+						}
+						if (!stop && !data.transparent) {
+							this.tops[z * 16 + x] = y
+							stop = true
+						} else if (!stop) {
+							this.setLight(x, y, z, 15, 0)
+						}
+					}
+				}
+			}
+
+			// Spread the light to places where the virtical columns stopped earlier, plus chunk borders
+			let spread = []
+			for (let x = 0; x < 16; x++) {
+				for (let z = 0; z < 16; z++) {
+					for (let y = this.tops[z * 16 + x] + 1; y <= max; y++) {
+						if (x === 15 || this.tops[z * 16 + x + 1] > y) {
+							spread.push(x + this.x, y, z + this.z)
+							continue
+						}
+						if (x === 0 || this.tops[z * 16 + x - 1] > y) {
+							spread.push(x + this.x, y, z + this.z)
+							continue
+						}
+						if (z === 15 || this.tops[(z + 1) * 16 + x] > y) {
+							spread.push(x + this.x, y, z + this.z)
+							continue
+						}
+						if (z === 0 || this.tops[(z - 1) * 16 + x] > y) {
+							spread.push(x + this.x, y, z + this.z)
+							continue
+						}
+						break
+					}
+				}
+			}
+			this.spreadLight(spread, 14)
+
+			for (let i = blockSpread.length - 1; i > 0; i--) {
+				let blocks = blockSpread[i]
+				if (blocks && blocks.length) {
+					this.spreadLight(blocks, i - 1, false, 1)
+				}
+			}
+
+			this.lit = true
+		}
+		setLight(x, y, z, level, blockLight) {
+			if(this.sections[y >> 4]) this.sections[y >> 4].setLight(x, y & 15, z, level, blockLight)
+		}
+		getLight(x, y, z, blockLight = 0) {
+			if (y >= this.sections.length * 16) return 15
+      if(!this.sections[y >> 4]) return 0
+			return this.sections[y >> 4].getLight(x, y & 15, z, blockLight)
+		}
+		trySpread(x, y, z, level, spread, blockLight, update = false) {
+      if(y < 0) return
+      
+			if (world.getLight(x, y, z, blockLight) < level) {
+				if (blockData[world.getBlock(x, y, z)].transparent) {
+					world.setLight(x, y, z, level, blockLight)
+					spread.push(x, y, z)
+				}
+			}
+			if (update && (x < this.x || x > this.x + 15 || z < this.z || z > this.z + 15)) {
+				let chunk = world.getChunk(x, z)
+				if (chunk.buffer && !world.meshQueue.includes(chunk)) {
+					world.meshQueue.push(chunk)
+				}
+			}
+		}
+		spreadLight(blocks, level, update = false, blockLight = 0) {
+			let spread = []
+			let x = 0, y = 0, z = 0
+			for (let i = 0; i < blocks.length; i += 3) {
+				x = blocks[i]
+				y = blocks[i+1]
+				z = blocks[i+2]
+        if(y < 0) continue
+				this.trySpread(x - 1, y, z, level, spread, blockLight, update)
+				this.trySpread(x + 1, y, z, level, spread, blockLight, update)
+				this.trySpread(x, y - 1, z, level, spread, blockLight, update)
+				this.trySpread(x, y + 1, z, level, spread, blockLight, update)
+				this.trySpread(x, y, z - 1, level, spread, blockLight, update)
+				this.trySpread(x, y, z + 1, level, spread, blockLight, update)
+			}
+			if (level > 1 && spread.length) {
+				this.spreadLight(spread, level - 1, update, blockLight)
+			}
+		}
+		tryUnSpread(x, y, z, level, spread, respread, blockLight) {
+      if(y < 0) return
+      
+			let light = world.getLight(x, y, z, blockLight)
+			let trans = blockData[world.getBlock(x, y, z)].transparent
+			if (light === level) {
+				if (trans) {
+					world.setLight(x, y, z, 0, blockLight)
+					spread.push(x, y, z)
+				}
+			} else if (light > level) {
+				respread[light].push(x, y, z)
+			}
+			if (x < this.x || x > this.x + 15 || z < this.z || z > this.z + 15) {
+				let chunk = world.getChunk(x, z)
+				if (chunk.buffer && !world.meshQueue.includes(chunk)) {
+					world.meshQueue.push(chunk)
+				}
+			}
+		}
+		unSpreadLight(blocks, level, respread, blockLight) {
+			let spread = []
+			let x = 0, y = 0, z = 0
+			for (let i = 0; i < blocks.length; i += 3) {
+				x = blocks[i]
+				y = blocks[i+1]
+				z = blocks[i+2]
+        if(y < 0) continue
+				this.tryUnSpread(x - 1, y, z, level, spread, respread, blockLight)
+				this.tryUnSpread(x + 1, y, z, level, spread, respread, blockLight)
+				this.tryUnSpread(x, y - 1, z, level, spread, respread, blockLight)
+				this.tryUnSpread(x, y + 1, z, level, spread, respread, blockLight)
+				this.tryUnSpread(x, y, z - 1, level, spread, respread, blockLight)
+				this.tryUnSpread(x, y, z + 1, level, spread, respread, blockLight)
+			}
+			if (level > 1 && spread.length) {
+				this.unSpreadLight(spread, level - 1, respread, blockLight)
+			}
+		}
+		reSpreadLight(respread, blockLight) {
+			for (let i = respread.length - 1; i > 1; i--) {
+				let blocks = respread[i]
+				let level = i - 1
+				let spread = respread[level]
+				for (let j = 0; j < blocks.length; j += 3) {
+					let x = blocks[j]
+					let y = blocks[j+1]
+					let z = blocks[j+2]
+					this.trySpread(x - 1, y, z, level, spread, blockLight)
+					this.trySpread(x + 1, y, z, level, spread, blockLight)
+					this.trySpread(x, y - 1, z, level, spread, blockLight)
+					this.trySpread(x, y + 1, z, level, spread, blockLight)
+					this.trySpread(x, y, z - 1, level, spread, blockLight)
+					this.trySpread(x, y, z + 1, level, spread, blockLight)
+				}
+			}
+		}
+		optimize() {
+			for (let i = 0; i < this.sections.length; i++) {
+				this.sections[i].optimize()
+			}
+			if (!world.meshQueue.includes(this)) {
+				world.meshQueue.push(this)
+			}
+			this.optimized = true
+		}
+		render() {
+			if (!this.buffer) {
+				return
+			}
+			if (p.canSee(this.x, this.minY, this.z, this.maxY)) {
+				renderedChunks++
+				glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+				gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+				glExtensions.vertex_array_object.bindVertexArrayOES(null)
+			}
+		}
+		updateBlock(x, y, z, world, lazy, leaveMe) {
+			if (this.buffer) {
+				this.lazy = lazy
+				if ((this.sections.length > y >> 4) && this.sections[y >> 4]) {
+					this.sections[y >> 4].updateBlock(x, y & 15, z, world, leaveMe)
+				}
+			}
+		}
+		deleteBlock(x, y, z, user) {
+			if (!this.sections[y >> 4]) {
+				return
+			}
+			if (user && !this.sections[y >> 4].edited) {
+				this.cleanSections[y >> 4] = this.sections[y >> 4].blocks.slice()
+				this.sections[y >> 4].edited = true
+				this.edited = true
+			}
+			this.sections[y >> 4].deleteBlock(x, y & 15, z)
+			this.minY = y < this.minY ? y : this.minY
+			this.maxY = y > this.maxY ? y : this.maxY
+		}
+		carveCaves() {
+			for (let i = 0; i < this.sections.length; i++) {
+				if (!this.sections[i].caves) {
+					this.sections[i].carveCaves()
+					if (i + 1 >= this.sections.length) {
+						this.caves = true
+					}
+					return
+				}
+			}
+		}
+		populate() {
+      var flowers = [blockIds.flowerOftheValley, blockIds.poppy, blockIds.dandelion, 
+                     blockIds.blueOrchid, blockIds.pinkTulip, blockIds.orangeTulip, blockIds.redTulip, blockIds.whiteTulip,
+                     blockIds.azureBluet, blockIds.cornFlower, blockIds.purpleFlower, blockIds.witherRose,
+                     blockIds.allium, blockIds.oxeyeDaisy,
+                     blockIds.lilac, blockIds.roseBush, blockIds.peony,
+                     blockIds.TallGrass, blockIds.DoubleTallGrass]
+      
+			randomSeed(hash(this.x, this.z) * 210000000)
+			let wx = 0, wz = 0, ground = 0, top = 0, rand = 0, place = false, topsi = 0, tall = 0
+      let trueX = this.x, trueY = this.y, trueZ = this.z
+      let smoothness = generator.smooth, hilliness = generator.height
+      let biomeSmooth = generator.biomeSmooth;
+			let biome = 0
+      let type = world.type
+
+			for (let i = 0; i < 16; i++) {
+				for (let k = 0; k < 16; k++) {
+					wx = this.x + i
+					wz = this.z + k
+
+					ground = this.tops[k * 16 + i]
+          biome = superflat ? 0 : noiseProfile.noise((trueX + i) * biomeSmooth, (trueZ + k) * biomeSmooth)
+          var b
+          if(superflat){b = "field"}else b = getBiome(biome)
+
+          let nb = getNetherBiome(biome)
+					if (trees && random() < 0.07 && type === "" && b === "field" && world.getBlock(i, ground, k) === blockIds.grass) {
+            top = ground + floor(4.5 + random(2.5))
+						rand = floor(random(4096))
+						let tree = random() < 0.6 ? blockIds.oakLog : ++top && blockIds.birchLog
+            let leaf = blockIds.leaves
+            let groundBlock = blockIds.dirt
+
+						//Center
+						for (let j = ground + 1; j <= top; j++) {
+							this.setBlock(i, j, k, tree)
+						}
+						this.setBlock(i, top + 1, k, leaf)
+						this.setBlock(i, ground, k, groundBlock)
+
+						//Bottom leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//2nd layer leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//3rd layer leaves
+						for (let x = -1; x <= 1; x++) {
+							for (let z = -1; z <= 1; z++) {
+								if (x || z) {
+									if (x & z) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//Top leaves
+						world.spawnBlock(wx + 1, top + 1, wz, leaf)
+						world.spawnBlock(wx, top + 1, wz - 1, leaf)
+						world.spawnBlock(wx, top + 1, wz + 1, leaf)
+						world.spawnBlock(wx - 1, top + 1, wz, leaf)
+					}
+          
+          if(b === "snowyField" && trees && random() < 0.07 && type === "" && world.getBlock(i, ground, k)){
+            top = ground + floor(4.5 + random(2.5))
+						rand = floor(random(4096))
+						let tree = random() < 0.6 ? blockIds.oakLog : ++top && blockIds.birchLog
+            let leaf = blockIds.leaves
+            let groundBlock = blockIds.dirt
+            let snow = blockIds.snow
+
+						//Center
+						for (let j = ground + 1; j <= top; j++) {
+							this.setBlock(i, j, k, tree)
+						}
+						this.setBlock(i, top + 1, k, leaf)
+						this.setBlock(i, ground, k, groundBlock)
+            this.setBlock(i, top + 2, k, snow | LAYER2)
+            
+						//Top leaves
+						world.spawnBlock(wx + 1, top + 1, wz, leaf)
+						world.spawnBlock(wx, top + 1, wz - 1, leaf)
+						world.spawnBlock(wx, top + 1, wz + 1, leaf)
+						world.spawnBlock(wx - 1, top + 1, wz, leaf)
+            world.spawnBlock(wx + 1, top + 2, wz, snow | LAYER1)
+            world.spawnBlock(wx, top + 2, wz - 1, snow | LAYER1)
+            world.spawnBlock(wx, top + 2, wz + 1, snow | LAYER1)
+						world.spawnBlock(wx - 1, top + 2, wz, snow | LAYER1)
+
+						//Bottom leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+									}
+								}
+							}
+						}
+            
+						//3rd layer leaves
+						for (let x = -1; x <= 1; x++) {
+							for (let z = -1; z <= 1; z++) {
+								if (x || z) {
+									if (x & z) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top, wz + z, leaf)
+                      if(rand & 2) world.spawnBlock(wx + x, top + 1, wz + z, snow | LAYER2)
+                      else world.spawnBlock(wx + x, top + 1, wz + z, snow | LAYER1)
+										}
+									} else {
+										world.spawnBlock(wx + x, top, wz + z, leaf)
+                    world.spawnBlock(wx + x, top + 1, wz + z, snow | LAYER1)
+									}
+								}
+							}
+						}
+
+						//2nd layer leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+                      if(rand & 2) world.spawnBlock(wx + x, top, wz + z, snow | LAYER2)
+                      else world.spawnBlock(wx + x, top, wz + z, snow | LAYER1)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+                    world.spawnBlock(wx + x, top, wz + z, snow | LAYER1)
+									}
+								}
+							}
+						}
+            
+            //get rid of snow underneath
+						/*for (let x = -1; x <= 1; x++) {
+							for (let z = -1; z <= 1; z++) {
+								if(x || z){
+                  var g = world.getTop(wx,wz)
+                  if(g) world.setBlock(wx+i, g+1, wz+k, 0)
+                }
+							}
+						}*/
+            //
+          }
+          
+          // Cactus
+          if (random() < 0.01 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
+            top = ground + Math.floor(2.5 + random(1.5));
+            rand = Math.floor(random(4096));
+            let tree = blockIds.cactus | CACTUS;
+
+            //Center
+            for (let j = ground + 1; j <= top; j++) {
+              this.setBlock(i, j, k, tree);
+            }
+            this.setBlock(i, ground, k, blockIds.sand);
+          }
+          if (random() < 0.006 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
+            let tree = blockIds.deadBush | CROSS;
+
+            this.setBlock(i,ground+1,k, tree);
+            this.setBlock(i, ground, k, blockIds.sand);
+          }
+          
+          // Jungle trees
+          if(trees && random() < 0.01 && type === "" && (b === "jungle" || b === "giantJungle") && world.getBlock(i, ground, k)){
+            tall = floor(5 + random(5)) //5 to 10
+            top = ground + tall
+            let tree = blockIds.jungleLog
+            let leaf = blockIds.leaves
+            
+            //Center
+						for (let j = ground + 1; j <= top; j++) {
+							this.setBlock(i, j, k, tree)
+						}
+						this.setBlock(i, top + 1, k, leaf)
+						this.setBlock(i, ground, k, blockIds.dirt)
+            
+            //Bottom leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 2, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//2nd layer leaves
+						for (let x = -2; x <= 2; x++) {
+							for (let z = -2; z <= 2; z++) {
+								if (x || z) {
+									if ((x * z & 7) === 4) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//3rd layer leaves
+						for (let x = -1; x <= 1; x++) {
+							for (let z = -1; z <= 1; z++) {
+								if (x || z) {
+									if (x & z) {
+										place = rand & 1
+										rand >>>= 1
+										if (place) {
+											world.spawnBlock(wx + x, top, wz + z, leaf)
+										}
+									} else {
+										world.spawnBlock(wx + x, top, wz + z, leaf)
+									}
+								}
+							}
+						}
+
+						//Top leaves
+						world.spawnBlock(wx + 1, top + 1, wz, leaf)
+						world.spawnBlock(wx, top + 1, wz - 1, leaf)
+						world.spawnBlock(wx, top + 1, wz + 1, leaf)
+						world.spawnBlock(wx - 1, top + 1, wz, leaf)
+          }//end jungle trees
+          //Giant jungle trees
+          if(trees && random() < 0.01 && type === "" && b === "giantJungle" && world.getBlock(i, ground, k)){
+            tall = floor(10 + random(20)) //10 to 30
+            top = ground + tall
+            let tree = blockIds.jungleLog
+            let leaf = blockIds.leaves
+                  
+            //Center
+            for (let j = ground + 1; j < top; j++) {
+              this.setBlock(i, j, k, tree)
+              world.spawnBlock(wx + 1, j, wz, tree)
+              world.spawnBlock(wx, j, wz + 1, tree)
+              world.spawnBlock(wx+1, j, wz+1, tree)
+            }
+            this.setBlock(i, ground, k, blockIds.dirt)
+            world.setBlock(wx + 1, ground, wz, blockIds.dirt)
+            world.setBlock(wx, ground, wz + 1, blockIds.dirt)
+            world.setBlock(wx+1, ground, wz+1, blockIds.dirt)
+
+            //Messy part
+            //leaves
+            let w2 = 5 * 5
+            let d2 = 5 * 5
+            let h2 = 5 * 5
+            for(var x=-4.5; x<4.5; x++){
+              for(var y=2; y<4.5; y++){
+                for(var z=-4.5; z<4.5; z++){
+                  let n = x * x / w2 + y * y / h2 + z * z / d2
+                  if (n < 1) {
+                    world.spawnBlock(wx + x+1, top-4+y, wz + z+1, leaf)
+                  }
+                }
+              }
+            }
+
+            //the diagonal branches
+            w2 = 3 * 3
+            d2 = 3 * 3
+            h2 = 3 * 3
+            for(y=ground+5; y<top; y += Math.floor(random(10))){
+              let side = Math.floor(random(4))
+              let mx=0,mz=0
+              switch(side){
+                case 0:
+                  mx=1
+                  break
+                case 1:
+                  mx=-1
+                  break
+                case 2:
+                  mz=1
+                  break
+                case 3:
+                  mz=-1
+                  break
+              }
+              let x = mx === 1?2:mx, z = mz === 1?2:mz
+              var rnd = Math.floor(random(4))+2
+              //branch
+              for(var by=0; by<rnd; by++){
+                world.setBlock(wx+x, y+by, wz+z, tree)
+                x += mx
+                z += mz
+              }
+              x -= mx
+              z -= mz
+              by -= 1
+
+              //leaves
+              for(var lx=-3; lx<3; lx++){
+                for(var ly=1; ly<3; ly++){
+                  for(var lz=-3; lz<3; lz++){
+                    let n = lx * lx / w2 + ly * ly / h2 + lz * lz / d2
+                    if (n < 1) {
+                      world.spawnBlock(wx+x + lx, y+by+ly, wz+z + lz, leaf)
+                    }
+                  }
+                }
+              }
+              // m = move; l = leaf
+            }
+          }//end giant jungle trees; jungle bushes
+          if(trees && random() < 0.007 && type === "" && (b === "jungle" || b === "giantJungle") && world.getBlock(i, ground, k)){
+            let w2 = 3 * 3
+            let d2 = 3 * 3
+            let h2 = 3 * 3
+            for(var x=-3; x<3; x++){
+              for(var y=1; y<3; y++){
+                for(var z=-3; z<3; z++){
+                  let n = x * x / w2 + y * y / h2 + z * z / d2
+                  if (n < 1) {
+                    world.spawnBlock(wx+x, ground+y, wz+z, blockIds.leaves)
+                  }
+                }
+              }
+            }
+            this.setBlock(i, ground+1, k, blockIds.jungleLog)
+          }
+          
+          if (random() < 0.005 && type === "nether" && ground > 79 && nb !== 0){
+            tall = floor(4.5 + random(2.5))
+            if(floor(random(12)) === 1) tall *= 2
+						top = ground + tall
+						rand = floor(random(4096))
+            let tree
+            let leaf
+            let groundBlock = blockIds.netherrack
+            if(this.type === "nether"){
+              if(nb === 1){
+                tree = blockIds.warpedStem
+                leaf = blockIds.warpedWartBlock
+              }else if(nb === 2){
+                tree = blockIds.crimsonStem
+                leaf = blockIds.netherWartBlock
+              }
+            }
+            
+            //Center
+						for (let j = ground + 1; j <= top; j++) {
+							this.setBlock(i, j, k, tree)
+						}
+						this.setBlock(i, top + 1, k, leaf)
+						this.setBlock(i, ground, k, groundBlock)
+            
+            //Shroomlight
+            for(var l=0; l<3; l++) world.spawnBlock(wx + random(-2, 2), top + random(-1,1), wz + random(-2,2), blockIds.shroomlight)
+            
+            //Top leaves
+            for(var x=-1; x<2; x++){
+              for(var z=-1; z<2; z++){
+                place = (x&1) && (z&1) ? rand & 1 : true
+                rand >>>= 1
+                if(place){
+                  world.spawnBlock(wx + x, top + 1, wz + z, leaf)
+                }
+              }
+            }
+            
+            //layer 2 leaves
+            for(var x=-2; x<3; x++){
+              for(var z=-2; z<3; z++){
+                place = (x===2 || x===-2) && (z===2 || z==-2) ? rand & 1 : true
+                rand >>>= 1
+                if(place){
+                  world.spawnBlock(wx + x, top, wz + z, leaf)
+                }
+              }
+            }
+            
+            rand = floor(random(4096))
+            //layer 1 leaves
+            for(var x=-2; x<3; x++){
+              for(var z=-2; z<3; z++){
+                place = x===2 || x===-2 || z===2 || z==-2 ? !(rand & 1) : false
+                rand >>>= 1
+                if(place){
+                  world.spawnBlock(wx + x, top - 1, wz + z, leaf)
+                }
+              }
+            }
+            
+            rand = floor(random(40964096))
+            //drooping leaves
+            for(var x=-2; x<3; x++){
+              for(var z=-2; z<3; z++){
+                place = x===2 || x===-2 || z===2 || z==-2
+                rand >>>= 1
+                if(place){
+                  var h = rand & 4 && rand & 8 ? rand & 3 : 0
+                  if(h){
+                    world.spawnBlock(wx + x, top - 1, wz + z, leaf) //to make sure removed ones are put back
+                    for(var y=0; y<h; y++){
+                      world.spawnBlock(wx + x, top - 2 - y, wz + z, leaf)
+                    }
+                  }
+                }
+              }
+            }
+            
+            if(nb === 2){
+              rand = floor(random(40964096))
+              //vines
+              for(var x=-2; x<3; x++){
+                for(var z=-2; z<3; z++){
+                  place = x===2 || x===-2 || z===2 || z==-2
+                  rand >>>= 1
+                  if(place){
+                    var h = (rand & 4 && rand & 8) ? (rand & (tall-2)) - 1 : 0
+                    if(h){
+                      world.spawnBlock(wx + x, top - 1, wz + z, leaf) //to make sure removed ones are put back
+                      for(var y=0; y<h; y++){
+                        world.spawnBlock(wx + x, top - 2 - y, wz + z, blockIds.weepingVinesPlant)
+                      }
+                      world.spawnBlock(wx + x, top - 2 - h, wz + z, blockIds.weepingVines)
+                    }
+                  }
+                }
+              }
+            }
+            
+          }
+          
+          //flowers and vines
+          if (random() < 0.05 && this.getBlock(i, ground, k) === blockIds.grass) {
+            var flower = flowers[Math.round(random(flowers.length-1))]
+            world.spawnBlock(wx, ground+1, wz, flower);
+          }
+          var block = this.getBlock(i, ground, k)
+          if(random() < 0.05){
+            if(block === blockIds.crimsonNylium){
+              world.spawnBlock(wx, ground+1, wz, blockIds.crimsonRoots);
+            }else if(block === blockIds.warpedNylium){
+              world.spawnBlock(wx, ground+1, wz, blockIds.warpedRoots);
+            }
+          }
+          
+          //lava rivers
+          if(random() < 0.005 && world.getBlock(i,ground,k) && this.type==="nether"){
+            let it = 0
+            let x=wx, y=ground, z=wz
+            let dir=floor(random(0,8))
+            for(; it<100; it++){
+              let xp,zp
+              switch(dir){
+                case 0:
+                  x+=1
+                  zp=true
+                  break
+                case 1:
+                  x+=1
+                  z+=1
+                  break
+                case 2:
+                  z+=1
+                  xp=true
+                  break
+                case 3:
+                  x-=1
+                  z+=1
+                  break
+                case 4:
+                  x-=1
+                  zp=true
+                  break
+                case 5:
+                  x-=1
+                  z-=1
+                  break
+                case 6:
+                  z-=1
+                  xp=true
+                  break
+                case 7:
+                  x+=1
+                  z-=1
+                  break
+              }
+              if(random() < 0.08){
+                dir += round(random(-1,1))
+              }
+              let prev = world.getBlock(x,y,z)
+              world.setBlock(x,y,z,blockIds.Lava)
+              if(xp){
+                world.setBlock(x+1,y,z,blockIds.Lava)
+              }
+              if(zp){
+                world.setBlock(x,y,z+1,blockIds.Lava)
+              }
+              if(!prev && y>1){
+                y--
+                prev = world.getBlock(x,y,z)
+                world.setBlock(x,y,z,blockIds.Lava)
+                while(!prev && y>1){
+                  y--
+                  prev = world.getBlock(x,y,z)
+                  world.setBlock(x,y,z,blockIds.Lava)
+                }
+              }
+              if(world.getBlock(x,y-1,z) === blockIds.Lava) break
+            }
+          }
+
+          if(this.type === "nether"){
+            let l
+            if(random() < 0.005){
+              let r = random(12345123451234512345)*3
+              let x=wx, y=this.ceils[k * 16 + i], z=wz
+              let ri=floor(random(5,15))
+              for(l=0; l<ri; l++){
+                x += r&1 - 1; r >>>= 1
+                y += r&3 - 2; r >>>= 1
+                z += r&1 - 1; r >>>= 1
+                world.spawnBlock(x,y,z, blockIds.glowstone)
+              }
+            }
+            
+            for(l=0; l<16; l++){
+              let x = random(0, 16)
+              let y = random(10, 177)
+              let z = random(0, 16)
+              if(world.getBlock(wx+x,y,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z) === blockIds.netherrack){
+                world.setBlock(wx+x,y,wz+z, blockIds.netherQuartzOre)
+              }
+            }
+            
+            for(l=0; l<10; l++){
+              let x = random(0, 16)
+              let y = random(10, 177)
+              let z = random(0, 16)
+              if(world.getBlock(wx+x,y,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z) === blockIds.netherrack){
+                world.setBlock(wx+x,y,wz+z, blockIds.netherGoldOre)
+              }
+            }
+          }else{
+            // Blocks of each per chunk in Minecraft
+            // Coal: 185.5
+            // Iron: 111.5
+            // Gold: 10.4
+            // Redstone: 29.1
+            // Diamond: 3.7
+            // Lapis: 4.1
+            ground -= 4
+
+            if (random() < 3.7 / 256) {
+              let y = random() * 16 | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.diamondOre)
+              }
+            }
+
+            if (random() < 111.5 / 256) {
+              let y = random() * 64 | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.ironOre)
+              }
+            }
+
+            if (random() < 185.5 / 256) {
+              let y = random() * ground | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.coalOre)
+              }
+            }
+
+            if (random() < 10.4 / 256) {
+              let y = random() * 32 | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.goldOre)
+              }
+            }
+
+            if (random() < 29.1 / 256) {
+              let y = random() * 16 | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.redstoneOre)
+              }
+            }
+
+            if (random() < 4.1 / 256) {
+              let y = random() * 32 | 0 + 1
+              y = y < ground ? y : ground
+              if (this.getBlock(i, y, k)) {
+                this.setBlock(i, y < ground ? y : ground, k, blockIds.lapisOre)
+              }
+            }
+				  }
+          
+        }
+			}
+
+			this.populated = true
+		}
+		genMesh() {
+			let start = performance.now()
+			let barray = bigArray
+			let index = 0
+			for (let i = 0; i < this.sections.length; i++) {
+				index = this.sections[i].genMesh(barray, index)
+			}
+			let arrayDone = performance.now()
+
+			if (!this.buffer) {
+				this.buffer = gl.createBuffer()
+			}
+			let data = barray.slice(0, index)
+
+			let maxY = 0
+			let minY = 255
+			let y = 0
+			for (let i = 1; i < data.length; i += 6) {
+				y = data[i]
+				maxY = max(maxY, y)
+				minY = min(minY, y)
+			}
+			this.maxY = maxY
+			this.minY = minY
+			this.faces = data.length / 32
+			glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
+			gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW)
+			gl.enableVertexAttribArray(glCache.aVertex)
+			gl.enableVertexAttribArray(glCache.aTexture)
+			gl.enableVertexAttribArray(glCache.aShadow)
+			gl.enableVertexAttribArray(glCache.aSkylight)
+			gl.enableVertexAttribArray(glCache.aBlocklight)
+			gl.vertexAttribPointer(glCache.aVertex, 3, gl.FLOAT, false, 32, 0)
+			gl.vertexAttribPointer(glCache.aTexture, 2, gl.FLOAT, false, 32, 12)
+			gl.vertexAttribPointer(glCache.aShadow, 1, gl.FLOAT, false, 32, 20)
+			gl.vertexAttribPointer(glCache.aSkylight, 1, gl.FLOAT, false, 32, 24)
+			gl.vertexAttribPointer(glCache.aBlocklight, 1, gl.FLOAT, false, 32, 28)
+			glExtensions.vertex_array_object.bindVertexArrayOES(null)
+			this.lazy = false
+		}
+		tick() {
+			if (this.edited) {
+				for (let i = 0; i < this.sections.length; i++) {
+					if (this.sections[i].edited) {
+						this.sections[i].tick()
+					}
+				}
+			}
+		}
+		load() {
+			let chunkX = this.x >> 4
+			let chunkZ = this.z >> 4
+			let load = null
+			
+			for (let i = 0; i < world.loadFrom.length; i++) {
+				load = world.loadFrom[i]
+				if (load.x === chunkX && load.z === chunkZ) {
+					let y = load.y * 16
+					for (let j in load.blocks) {
+            if(blockData[load.blocks[j]]){ // if a block doesn't exsist, they won't be generated
+						  world.setBlock((j >> 8 & 15) + this.x, (j >> 4 & 15) + y, (j & 15) + this.z, load.blocks[j])
+            }
+					}
+					world.loadFrom.splice(i--, 1)
+				}
+			}
+			this.loaded = true
+		}
+	}
+
+	class Contacts {
+		constructor() {
+			this.array = []
+			this.size = 0
+		}
+		add(x, y, z, block) {
+			if (this.size === this.array.length) {
+				this.array.push([ x, y, z, block ])
+			} else {
+				this.array[this.size][0] = x
+				this.array[this.size][1] = y
+				this.array[this.size][2] = z
+				this.array[this.size][3] = block
+			}
+			this.size++
+		}
+		clear() {
+			this.size = 0
+		}
+	}
+
+	class Entity {
+		constructor(x, y, z, pitch, yaw, velx, vely, velz, width, height, depth, vertices, texture, faces, despawns) {
+			this.x = x
+			this.y = y
+			this.z = z
+			this.previousX = x
+			this.previousY = y
+			this.previousZ = z
+			this.canStepX = true
+			this.canStepY = true
+			this.pitch = pitch
+			this.yaw = yaw
+			this.velx = velx
+			this.vely = vely
+			this.velz = velz
+			this.width = width
+			this.height = height
+			this.depth = depth
+      this.offsetY = 0
+      this.hidden = false
+      this.harmEffect = 0
+			this.contacts = new Contacts()
+			this.lastUpdate = performance.now()
+			this.onGround = false
+      this.gravityStength = -0.032
+      this.standingOn = 0
+			this.despawns = despawns
+			this.spawn = this.lastUpdate
+			this.canDespawn = false
+      this.dieEffect = 0
+			this.faces = faces
+			this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
+			const verticesBuffer = gl.createBuffer()
+			const textureBuffer = gl.createBuffer()
+			glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+			gl.vertexAttribPointer(glCache.aVertexEntity, 3, gl.FLOAT, false, 0, 0)
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer)
+			gl.bufferData(gl.ARRAY_BUFFER, texture, gl.STATIC_DRAW)
+			gl.vertexAttribPointer(glCache.aTextureEntity, 2, gl.FLOAT, false, 0, 0)
+			
+			gl.enableVertexAttribArray(glCache.aVertexEntity)
+			gl.enableVertexAttribArray(glCache.aTextureEntity)
+			glExtensions.vertex_array_object.bindVertexArrayOES(null)
+		}
+		updateVelocity(now) {
+			let dt = (now - this.lastUpdate) / 33
+			dt = dt > 2 ? 2 : dt
+      this.standingOn = world.getBlock(this.x, round(this.y-this.height-1), this.z)
+      if (this.liquid){
+        this.gravityStength = -0.01
+        this.vely *= 0.9
+      }else{
+        this.gravityStength = -0.02
+      }
+      this.vely += this.gravityStength * dt
+		  if (this.vely < -1.5) {
+		  	this.vely = -1.5
+		  }
+		  let drag = this.liquid ? 0.7 : (this.onGround ? 0.5 : 0.85)
+      if(blockData[this.standingOn].slide) drag = blockData[this.standingOn].slide
+		  this.velz += (this.velz * 0.9 - this.velz) * dt
+		  this.velx += (this.velx * 0.9 - this.velx) * dt
+		  // this.vely += (this.vely * 0.9 - this.vely) * dt
+		}
+		collided(x, y, z, vx, vy, vz, block) {
+			let verts = blockData[block].shape.verts
+			let px = roundBits(this.x - this.width / 2 - x)
+			let py = roundBits(this.y - this.height / 2 - y)
+			let pz = roundBits(this.z - this.depth / 2 - z)
+			let pxx = roundBits(this.x + this.width / 2 - x)
+			let pyy = roundBits(this.y + this.height / 2 - y)
+			let pzz = roundBits(this.z + this.depth / 2 - z)
+			let minX, minY, minZ, maxX, maxY, maxZ, min, max
+
+			//Top and bottom faces
+			let faces = verts[0]
+			if (vy <= 0) {
+				faces = verts[1]
+			}
+			if (!vx && !vz) {
+				for (let face of faces) {
+					min = face.min
+					minX = min[0]
+					minZ = min[2]
+					max = face.max
+					maxX = max[0]
+					maxZ = max[2]
+					if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && maxZ > pz) {
+						if (vy <= 0) {
+							this.onGround = true
+							this.y = round((face[1] + y + this.height / 2) * 10000) / 10000
+							this.vely = 0
+							return false
+						} else {
+							return true
+						}
+					}
+				}
+				return false
+			}
+
+			//West and East faces
+			if (vx < 0) {
+				faces = verts[4]
+			} else if (vx > 0) {
+				faces = verts[5]
+			}
+			if (vx) {
+				let col = false
+				for (let face of faces) {
+					min = face.min
+					minZ = min[2]
+					minY = min[1]
+					max = face.max
+					maxZ = max[2]
+					maxY = max[1]
+					if (face[0] > px && face[0] < pxx && minY < pyy && maxY > py && minZ < pzz && maxZ > pz) {
+						if (maxY - py > 0.5) {
+							this.canStepX = false
+						}
+						col = true
+					}
+				}
+				return col
+			}
+
+			//South and North faces
+			if (vz < 0) {
+				faces = verts[2]
+			} else if (vz > 0) {
+				faces = verts[3]
+			}
+			if (vz) {
+				let col = false
+				for (let face of faces) {
+					min = face.min
+					minX = min[0]
+					minY = min[1]
+					max = face.max
+					maxX = max[0]
+					maxY = max[1]
+					if (face[2] > pz && face[2] < pzz && minY < pyy && maxY > py && minX < pxx && maxX > px) {
+						if (maxY - py > 0.5) {
+							this.canStepZ = false
+						}
+						col = true
+					}
+				}
+				return col
+			}
+		}
+		move(now) {
+			let pminX = floor(this.x - this.width / 2)
+			let pmaxX = ceil(this.x + this.width / 2)
+			let pminY = floor(this.y - this.height / 2)
+			let pmaxY = ceil(this.y + this.height / 2)
+			let pminZ = floor(this.z - this.depth / 2)
+			let pmaxZ = ceil(this.z + this.depth / 2)
+			let block = null
+
+      this.liquid = false
+			for (let x = pminX; x <= pmaxX; x++) {
+				for (let y = pminY; y <= pmaxY; y++) {
+					for (let z = pminZ; z <= pmaxZ; z++) {
+						let block = world.getBlock(x, y, z)
+						if (block && blockData[block].solid && !blockData[block].liquid) {
+							this.contacts.add(x, y, z, block)
+						}
+            if(x === round(this.x) && z === round(this.z) && blockData[block].liquid){
+              this.liquid = true
+            }
+					}
+				}
+		
